@@ -53,6 +53,8 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
     const getValueIntegration = new apigateway.LambdaIntegration(handler);
     const setValueIntegration = new apigateway.LambdaIntegration(handler);
 
+    // GET: https://apigw.com/2934923649
+    // POST: https://apigw.com/2934923649 {"someValypropo": "value"}
     const key = api.root.addResource('{key}');
     key.addMethod("GET", getValueIntegration); // GET value by key/
     key.addMethod("POST", setValueIntegration); // POST value with key (create or update)/
