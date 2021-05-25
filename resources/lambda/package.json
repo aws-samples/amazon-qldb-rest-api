@@ -1,0 +1,20 @@
+{
+  "name": "qldb-lambda-kvs",
+  "version": "0.0.1",
+  "description": "An AWS Lambda function to expose a key-value store interface for Amazon QLDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "qldb",
+    "lambda",
+    "api",
+    "rest"
+  ],
+  "author": "AWS",
+  "license": "MIT",
+  "dependencies": {
+    "amazon-qldb-kvs-nodejs": "^0.4.0"
+  }
+}
