@@ -1,5 +1,5 @@
 const { QLDBKVS } = require("amazon-qldb-kvs-nodejs");
-const { getValue, setValue } = require("./resolvers");
+const { getValue, setValue, setValues } = require("./resolvers");
 
 
 const LEDGER_NAME = process.env.LEDGER_NAME ? process.env.LEDGER_NAME : "keyvaluestore";
@@ -28,20 +28,31 @@ const returnFailure = (error) => {
 
 const main = async (event, context) => {
     try {
-        const method = event.httpMethod;
-        // Get name, if present
-        const key = event.path.startsWith('/') ? event.path.substring(1) : event.path;
+        const ops = event.ops;
+        const payload = event.payload;
+        let res;
 
-        switch (method) {
-            case "GET":
-                const bodyGet = await getValue(qldbKVS, key);
-                return returnSuccess(bodyGet);
-            case "POST":
-                const value = JSON.parse(event.body);
-                const bodyPost = await setValue(qldbKVS, key, value);
-                return returnSuccess(bodyPost);
+        switch (ops) {
+            case "getValue":
+                if (payload.length == 1) {
+                    res = await getValue(qldbKVS, payload[0].key);
+                } else {
+                    res = {"msg": "not implemented"}
+                }
+                return returnSuccess(res);
+
+            case "setValue":
+                if (payload.length == 1) {
+                    res = await setValue(qldbKVS, payload[0].key, payload[0].value);
+                } else {
+                    const keyArray = payload.map( p => { return p.key });
+                    const valueArray = payload.map ( p => { return p.value });
+                    res = await setValues(qldbKVS, keyArray, valueArray);
+                }
+                return returnSuccess(res);
+
             default:
-                throw new Error(`Method ${method} is not supported.`);
+                throw new Error(`Operation ${ops} is not supported.`);
         }
     } catch (error) {
         console.log(error);

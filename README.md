@@ -21,12 +21,12 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 2. Bootstrap account with CDK resources
 
-`./devops/cdk-bootstrap-to.sh 272769237721 ap-southeast-1`
+`./devops/cdk-bootstrap-to.sh 451823959762 ap-southeast-1`
 
 3. Deploy all to the account of choice
 
-`./devops/cdk-deploy-to.sh 272769237721 ap-southeast-1`
+`./devops/cdk-deploy-to.sh 451823959762 ap-southeast-1`
 
 4. Clean up
 
-`./devops/cdk-clean-from.sh 272769237721 ap-southeast-1`
+`./devops/cdk-clean-from.sh 451823959762 ap-southeast-1`

@@ -12,5 +12,13 @@ async function setValue(qldbKVSDriver, key, value) {
     };
 }
 
+async function setValues(qldbKVSDriver, keyArray, valueArray) {
+    const data = await qldbKVSDriver.setValues(keyArray, valueArray);
+    return {
+        response: data
+    };
+}
+
 module.exports.getValue = getValue;
 module.exports.setValue = setValue;
+module.exports.setValues = setValues;
