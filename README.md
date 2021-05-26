@@ -30,3 +30,40 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 4. Clean up
 
 `./devops/cdk-clean-from.sh 451823959762 ap-southeast-1`
+
+
+## Testing
+
+### E2E Automated Test
+
+Install dependencies
+
+```bash
+npm ci
+```
+
+Set API endpoint URL in line 1 of [test/e2e.test.ts](test/e2e.test.ts)
+
+**Note: Still trying to figure out how to inject environment variable to Jest**
+
+```js
+//Insert the API Gateway Endpoint URL
+const APIGW_ENDPOINT= process.env.APIGW_ENDPOINT || 'https://1yqzhex0t1.execute-api.ap-southeast-1.amazonaws.com/prod';
+```
+
+Run test
+
+```bash
+npm test
+```
+
+### Manual Testing Example
+
+```bash
+ENDPOINT=https://1yqzhex0t1.execute-api.ap-southeast-1.amazonaws.com/prod
+
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '[{"key": "INVOICE194","value": {"date": "2021-05-22","billTo": "ABC Car Dealer Pte Ltd","carInfo": {"model": "Honda","make": "Jazz","year": 2021,"unitPrice": 89000},"quantity": 10}},{"key": "INVOICE114","value": {"date": "2021-05-22","billTo": "XYZ Car Dealer Pte Ltd","carInfo": {"model": "Honda","make": "Brio","year": 2019,"unitPrice": 50000},"quantity": 14}}]' \
+   $ENDPOINT
+```
