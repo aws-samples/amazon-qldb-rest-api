@@ -225,7 +225,6 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
     // #### END OF POST / - setValue - Create Single or Multiple Invoices ####
 
     // #### GET / - getValue - Get Single or Multiple Invoices ####
-
     const getValueRequestTemplate = `
     #set($v = $util.escapeJavaScript($input.params("keys")))
     #set($valueArray = $v.split(","))
@@ -238,7 +237,7 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
     }`;
 
     // Cannot use requestValidationOptions more than once due to bug - https://github.com/aws/aws-cdk/issues/14684
-    const getValueRequestValidator = new RequestValidator(this, 'getValueRequestValidator', {
+    const validateQueryStringAndHeader = new RequestValidator(this, 'validateQueryStringAndHeader', {
       restApi: api, 
       requestValidatorName: 'Validate query string parameters and headers',
       validateRequestBody: false,
@@ -260,13 +259,76 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       requestParameters: {
         'method.request.querystring.keys': true
       },
-      requestValidator: getValueRequestValidator,
+      requestValidator: validateQueryStringAndHeader,
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
-
     // #### END OF GET / - getValue - Get Single or Multiple Invoices ####
 
+    // #### GET /metadata-by-key - getMetadataByKey - Get Metadata by Key ####
+    const getMetadataByKeyResource = api.root.addResource('metadata-by-key');
 
+    const getMetadataByKeyRequestTemplate = `
+    #set($v = $util.escapeJavaScript($input.params("key")))
+    {
+        "ops": "getMetadataByKey",
+        "payload": {
+          "key": "$v"
+        }
+    }`;
 
+    const getMetadataByKeyIntegration = new LambdaIntegration(backend, {
+      proxy: false,
+      requestParameters: {},
+      allowTestInvoke: true,
+      requestTemplates: {
+        'application/json': getMetadataByKeyRequestTemplate
+      },
+      passthroughBehavior: PassthroughBehavior.NEVER,
+      integrationResponses: [ IntegrationResponse200, IntegrationResponse400, IntegrationResponse500 ]
+    });   
+
+    getMetadataByKeyResource.addMethod('GET', getMetadataByKeyIntegration, {
+      requestParameters: {
+        'method.request.querystring.key': true
+      },
+      requestValidator: validateQueryStringAndHeader,
+      methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
+    });
+    // #### END OF GET /metadata-by-key - getMetadataByKey - Get Metadata by Key ####
+
+    // #### GET /metadata-by-doc - getMetadataByDoc - Get Metadata by DocId and TxId ####
+    const getMetadataByDocResource = api.root.addResource('metadata-by-doc');
+
+    const getMetadataByDocRequestTemplate = `
+    #set($d = $util.escapeJavaScript($input.params("docId")))
+    #set($t = $util.escapeJavaScript($input.params("txId")))
+    {
+        "ops": "getMetadataByDoc",
+        "payload": {
+          "docId": "$d",
+          "txId": "$t"
+        }
+    }`;
+
+    const getMetadataByDocIntegration = new LambdaIntegration(backend, {
+      proxy: false,
+      requestParameters: {},
+      allowTestInvoke: true,
+      requestTemplates: {
+        'application/json': getMetadataByDocRequestTemplate
+      },
+      passthroughBehavior: PassthroughBehavior.NEVER,
+      integrationResponses: [ IntegrationResponse200, IntegrationResponse400, IntegrationResponse500 ]
+    });   
+
+    getMetadataByDocResource.addMethod('GET', getMetadataByDocIntegration, {
+      requestParameters: {
+        'method.request.querystring.docId': true,
+        'method.request.querystring.txId': true
+      },
+      requestValidator: validateQueryStringAndHeader,
+      methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
+    });
+    // #### END OF GET /metadata-by-doc - getMetadataByDoc - Get Metadata by DocId and TxId ####
   }
 }

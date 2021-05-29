@@ -1,4 +1,4 @@
-const APIGW_ENDPOINT= process.env.APIGW_ENDPOINT || 'https://31pycb0sy6.execute-api.ap-southeast-1.amazonaws.com/prod/';
+const APIGW_ENDPOINT= process.env.APIGW_ENDPOINT || 'https://s1f6jernw2.execute-api.ap-southeast-1.amazonaws.com/prod/';
 const request = require('supertest')(APIGW_ENDPOINT);
 const _ = require('lodash');
 const util = require('util');
@@ -123,7 +123,7 @@ describe('Insert new invoice', () => {
     });
 });
 
-describe.only('Retrieve invoices', () => {
+describe('Retrieve invoices', () => {
     it('can retrieve 1 invoice', async () => {
         const result = await request
                                 .get('/')
@@ -193,6 +193,109 @@ describe.only('Retrieve invoices', () => {
                                     key: 'TEST10001'
                                 })
                                 .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Missing required request parameters');
+    });
+});
+
+describe('Get invoice metadata by key', () => {
+    it('can get 1 invoice metadata by key', async () => {
+        const result = await request
+                                .get('/metadata-by-key')
+                                .query({
+                                    key: 'TEST10001'
+                                });
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(typeof res).toEqual('object');
+        expect(res).toHaveProperty('LedgerName');
+        expect(res).toHaveProperty('TableName');
+        expect(res).toHaveProperty('BlockAddress');
+        expect(res).toHaveProperty('DocumentId');
+        expect(res).toHaveProperty('RevisionHash');
+        expect(res).toHaveProperty('Proof');
+    });
+
+    it('cannot get invoice metadata for key that does not exist', async () => {
+        const result = await request
+                                .get('/metadata-by-key')
+                                .query({
+                                    key: 'XYZ'
+                                });
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain("Unable to find block address and document id");
+    });
+
+    it('cannot retrieve metadata without "key" query string', async () => {
+        const result = await request
+                                .get('/metadata-by-key')
+                                .query({
+                                    some_other_key: 'TEST10001'
+                                })
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Missing required request parameters');
+    });
+});
+
+describe('Get invoice metadata by docId and txId', () => {
+    it('can get 1 invoice metadata by docId and txId', async () => {
+
+        const invoiceNo = 'TEST40001';
+        let dataArray = [];
+        dataArray.push(_.cloneDeep(templateInvoice));
+        dataArray[0].key = invoiceNo;
+
+        const info = await request
+                                .post('/')
+                                .send(dataArray)
+                                .set('Content-Type', 'application/json');
+        
+        expect(info.statusCode).toEqual(200);
+        const docId = info.body[0].documentId;
+        const txId = info.body[0].txId;
+
+        const result = await request
+                                .get('/metadata-by-doc')
+                                .query({
+                                    docId: docId,
+                                    txId: txId
+                                });
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(typeof res).toEqual('object');
+        expect(res).toHaveProperty('LedgerName');
+        expect(res).toHaveProperty('TableName');
+        expect(res).toHaveProperty('BlockAddress');
+        expect(res).toHaveProperty('DocumentId');
+        expect(res).toHaveProperty('RevisionHash');
+        expect(res).toHaveProperty('Proof');
+    });
+
+    it('cannot get invoice metadata for docId and/or txId that do not exist', async () => {
+        const result = await request
+                                .get('/metadata-by-doc')
+                                .query({
+                                    docId: 'ABC',
+                                    txId: 'XYZ'
+                                });
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain("Unable to find revision metadata");
+    });
+
+    it('cannot retrieve metadata without "docId" and/or "txId" query string', async () => {
+        const result = await request
+                                .get('/metadata-by-doc')
+                                .query({
+                                    some_other_key: 'TEST10001'
+                                })
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');

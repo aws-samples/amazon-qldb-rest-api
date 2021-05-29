@@ -1,5 +1,5 @@
 const { QLDBKVS } = require('amazon-qldb-kvs-nodejs');
-const { getValue, getValues, setValue, setValues } = require('./resolvers');
+const { getValue, getValues, setValue, setValues, getMetadataByDoc, getMetadataByKey } = require('./resolvers');
 const parseErrorMessage = require('./errorHandler');
 const util = require('util');
 
@@ -26,7 +26,7 @@ const main = async (event, context) => {
                     res = await getValues(qldbKVS, payload);
                 }
                 console.log(util.inspect(res, {depth: 3}));
-                return res.value;
+                return res;
 
             case "setValue":
                 if (payload.length == 1) {
@@ -40,11 +40,22 @@ const main = async (event, context) => {
                     res = await setValues(qldbKVS, keyArray, valueArray);
                 }
                 console.log(util.inspect(res, {depth: 3}));
-                return res.response;
+                return res;
+            
+            case "getMetadataByKey":
+                res = await getMetadataByKey(qldbKVS, payload.key);
+                console.log(util.inspect(res, {depth: 3}));
+                return res;
+
+            case "getMetadataByDoc":
+                res = await getMetadataByDoc(qldbKVS, payload.docId, payload.txId);
+                console.log(util.inspect(res, {depth: 3}));
+                return res;
 
             default:
                 throw new Error(`Server Error: Operation ${ops} is not supported.`);
         }
+
     } catch (error) {
         const msg = parseErrorMessage(error);
         console.log(msg);
