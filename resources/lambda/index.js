@@ -1,5 +1,6 @@
-const { QLDBKVS } = require("amazon-qldb-kvs-nodejs");
-const { getValue, setValue, setValues } = require("./resolvers");
+const { QLDBKVS } = require('amazon-qldb-kvs-nodejs');
+const { getValue, getValues, setValue, setValues } = require('./resolvers');
+const parseErrorMessage = require('./errorHandler');
 const util = require('util');
 
 const LEDGER_NAME = process.env.LEDGER_NAME ? process.env.LEDGER_NAME : "keyvaluestore";
@@ -18,13 +19,14 @@ const main = async (event, context) => {
         let res;
 
         switch (ops) {
-            // case "getValue":
-            //     if (payload.length == 1) {
-            //         res = await getValue(qldbKVS, payload[0].key);
-            //     } else {
-            //         res = {"msg": "not implemented"}
-            //     }
-            //     return returnSuccess(res);
+            case "getValue":
+                if (payload.length == 1) {
+                    res = await getValue(qldbKVS, payload[0]);
+                } else {
+                    res = await getValues(qldbKVS, payload);
+                }
+                console.log(util.inspect(res, {depth: 3}));
+                return res.value;
 
             case "setValue":
                 if (payload.length == 1) {
@@ -44,8 +46,9 @@ const main = async (event, context) => {
                 throw new Error(`Server Error: Operation ${ops} is not supported.`);
         }
     } catch (error) {
-        console.log(error);
-        throw error;
+        const msg = parseErrorMessage(error);
+        console.log(msg);
+        throw msg;
     }
 }
 

@@ -3,7 +3,7 @@ import * as apigateway from "@aws-cdk/aws-apigateway";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as qldb from "@aws-cdk/aws-qldb";
 import * as iam from '@aws-cdk/aws-iam';
-import { LambdaIntegration,PassthroughBehavior,JsonSchemaVersion, JsonSchemaType, EndpointType } from '@aws-cdk/aws-apigateway';
+import { LambdaIntegration,PassthroughBehavior,JsonSchemaVersion, JsonSchemaType, EndpointType, RequestValidator } from '@aws-cdk/aws-apigateway';
 import { Duration } from '@aws-cdk/core';
 
 const LEDGER_NAME = process.env.LEDGER_NAME ? process.env.LEDGER_NAME : "keyvaluestore";
@@ -54,53 +54,108 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       description: "This service exposes a simple key-value store interace API for Amazon QLDB through REST pattern."
     });
 
-    // POST / - setValue - Create Single or Multiple Invoices
+    
     const root = api.root;
-    const setValueIntegration = new LambdaIntegration(backend, {
-      proxy: false,
-      requestParameters: {},
-      allowTestInvoke: true,
-      requestTemplates: {
-        'application/json': '{"ops":"setValue","payload":$input.json("$")}'
-      },
-      passthroughBehavior: PassthroughBehavior.NEVER,
-      integrationResponses: [
-        {
-          statusCode: "200",
-          responseTemplates: {},
-          responseParameters: {
-            'method.response.header.Content-Type': "'application/json'",
-            'method.response.header.Access-Control-Allow-Origin': "'*'",
-            'method.response.header.Access-Control-Allow-Credentials': "'true'"
-          }
-        },
-        {
-          selectionPattern: '.*Client Error.*',
-          statusCode: "400",
-          responseTemplates: {
-              'application/json': JSON.stringify({ message: "$util.escapeJavaScript($input.path('$.errorMessage'))" })
-          },
-          responseParameters: {
-              'method.response.header.Content-Type': "'application/json'",
-              'method.response.header.Access-Control-Allow-Origin': "'*'",
-              'method.response.header.Access-Control-Allow-Credentials': "'true'"
-          }
-        },
-        {
-          selectionPattern: '(\n|.)+',
-          statusCode: "500",
-          responseTemplates: {
-              'application/json': JSON.stringify({ message: "$util.escapeJavaScript($input.path('$.errorMessage'))" })
-          },
-          responseParameters: {
-              'method.response.header.Content-Type': "'application/json'",
-              'method.response.header.Access-Control-Allow-Origin': "'*'",
-              'method.response.header.Access-Control-Allow-Credentials': "'true'"
-          }
-        }
-      ]
+
+    const successResponseModel = api.addModel('SuccessResponseModel', {
+      contentType: 'application/json',
+      modelName: 'SuccessResponseModel',
+      schema: {
+        schema: JsonSchemaVersion.DRAFT4,
+        title: 'SuccessResponseModel',
+        type: JsonSchemaType.OBJECT
+      }
     });
 
+    const errorResponseModel = api.addModel('ErrorResponseModel', {
+      contentType: 'application/json',
+      modelName: 'ErrorResponseModel',
+      schema: {
+        schema: JsonSchemaVersion.DRAFT4,
+        title: 'ErrorResponseModel',
+        type: JsonSchemaType.OBJECT,
+        properties: {
+          message: { type: JsonSchemaType.STRING }
+        }
+      }
+    });
+
+    const IntegrationResponse200 = {
+      statusCode: "200",
+      responseTemplates: {},
+      responseParameters: {
+        'method.response.header.Content-Type': "'application/json'",
+        'method.response.header.Access-Control-Allow-Origin': "'*'",
+        'method.response.header.Access-Control-Allow-Credentials': "'true'"
+      }
+    };
+    
+    const IntegrationResponse400 = {
+      selectionPattern: '.*Client Error.*',
+      statusCode: "400",
+      responseTemplates: {
+          'application/json': JSON.stringify({ message: "$util.escapeJavaScript($input.path('$.errorMessage'))" })
+      },
+      responseParameters: {
+          'method.response.header.Content-Type': "'application/json'",
+          'method.response.header.Access-Control-Allow-Origin': "'*'",
+          'method.response.header.Access-Control-Allow-Credentials': "'true'"
+      }
+    };
+    
+    const IntegrationResponse500 = {
+      selectionPattern: '(\n|.)+',
+      statusCode: "500",
+      responseTemplates: {
+          'application/json': JSON.stringify({ message: "$util.escapeJavaScript($input.path('$.errorMessage'))" })
+      },
+      responseParameters: {
+          'method.response.header.Content-Type': "'application/json'",
+          'method.response.header.Access-Control-Allow-Origin': "'*'",
+          'method.response.header.Access-Control-Allow-Credentials': "'true'"
+      }
+    };
+
+    const methodResponse200 = {
+      // Successful response from the integration
+      statusCode: '200',
+      // Define what parameters are allowed or not
+      responseParameters: {
+        'method.response.header.Content-Type': true,
+        'method.response.header.Access-Control-Allow-Origin': true,
+        'method.response.header.Access-Control-Allow-Credentials': true
+      },
+      // Validate the schema on the response
+      responseModels: {
+        'application/json': successResponseModel
+      }
+    };
+
+    const methodResponse400 = {
+      statusCode: '400',
+      responseParameters: {
+        'method.response.header.Content-Type': true,
+        'method.response.header.Access-Control-Allow-Origin': true,
+        'method.response.header.Access-Control-Allow-Credentials': true
+      },
+      responseModels: {
+        'application/json': errorResponseModel
+      }
+    }
+
+    const methodResponse500 = {
+      statusCode: '500',
+      responseParameters: {
+        'method.response.header.Content-Type': true,
+        'method.response.header.Access-Control-Allow-Origin': true,
+        'method.response.header.Access-Control-Allow-Credentials': true
+      },
+      responseModels: {
+        'application/json': errorResponseModel
+      }
+    };
+    
+    // #### POST / - setValue - Create Single or Multiple Invoices ####
     const setValueModel = api.addModel('SetValueModel', {
       contentType: 'application/json',
       modelName: 'SetValueModel',
@@ -142,29 +197,17 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       }
     });
 
-    const setValueResponseModel = api.addModel('SetValueResponseModel', {
-      contentType: 'application/json',
-      modelName: 'SetValueResponseModel',
-      schema: {
-        schema: JsonSchemaVersion.DRAFT4,
-        title: 'SetValueResponseModel',
-        type: JsonSchemaType.ARRAY
-      }
+    const setValueIntegration = new LambdaIntegration(backend, {
+      proxy: false,
+      requestParameters: {},
+      allowTestInvoke: true,
+      requestTemplates: {
+        'application/json': '{"ops":"setValue","payload":$input.json("$")}'
+      },
+      passthroughBehavior: PassthroughBehavior.NEVER,
+      integrationResponses: [ IntegrationResponse200, IntegrationResponse400, IntegrationResponse500 ]
     });
     
-    const errorResponseModel = api.addModel('ErrorResponseModel', {
-      contentType: 'application/json',
-      modelName: 'ErrorResponseModel',
-      schema: {
-        schema: JsonSchemaVersion.DRAFT4,
-        title: 'ErrorResponseModel',
-        type: JsonSchemaType.OBJECT,
-        properties: {
-          message: { type: JsonSchemaType.STRING }
-        }
-      }
-    });
-
     root.addMethod('POST', setValueIntegration, {
       requestParameters: {
         'method.request.header.Content-Type': true
@@ -173,48 +216,57 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
         'application/json': setValueModel
       },
       requestValidatorOptions: {
-        requestValidatorName: 'validate body and parameters',
+        requestValidatorName: 'Validate body, query string parameters, and headers',
         validateRequestBody: true,
         validateRequestParameters: true
       },
-      methodResponses: [
-        {
-          // Successful response from the integration
-          statusCode: '200',
-          // Define what parameters are allowed or not
-          responseParameters: {
-            'method.response.header.Content-Type': true,
-            'method.response.header.Access-Control-Allow-Origin': true,
-            'method.response.header.Access-Control-Allow-Credentials': true
-          },
-          // Validate the schema on the response
-          responseModels: {
-            'application/json': setValueResponseModel
-          }
-        },
-        {
-          statusCode: '400',
-          responseParameters: {
-            'method.response.header.Content-Type': true,
-            'method.response.header.Access-Control-Allow-Origin': true,
-            'method.response.header.Access-Control-Allow-Credentials': true
-          },
-          responseModels: {
-            'application/json': errorResponseModel
-          }
-        },
-        {
-          statusCode: '500',
-          responseParameters: {
-            'method.response.header.Content-Type': true,
-            'method.response.header.Access-Control-Allow-Origin': true,
-            'method.response.header.Access-Control-Allow-Credentials': true
-          },
-          responseModels: {
-            'application/json': errorResponseModel
-          }
-        }
-      ]
+      methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
+    // #### END OF POST / - setValue - Create Single or Multiple Invoices ####
+
+    // #### GET / - getValue - Get Single or Multiple Invoices ####
+
+    const getValueRequestTemplate = `
+    #set($v = $util.escapeJavaScript($input.params("keys")))
+    #set($valueArray = $v.split(","))
+    {
+       "ops": "getValue",
+       "payload": [#foreach($item in $valueArray)
+        "$item"#if($foreach.hasNext),#end
+        #end
+       ]
+    }`;
+
+    // Cannot use requestValidationOptions more than once due to bug - https://github.com/aws/aws-cdk/issues/14684
+    const getValueRequestValidator = new RequestValidator(this, 'getValueRequestValidator', {
+      restApi: api, 
+      requestValidatorName: 'Validate query string parameters and headers',
+      validateRequestBody: false,
+      validateRequestParameters: true
+    });
+
+    const getValueIntegration = new LambdaIntegration(backend, {
+      proxy: false,
+      requestParameters: {},
+      allowTestInvoke: true,
+      requestTemplates: {
+        'application/json': getValueRequestTemplate
+      },
+      passthroughBehavior: PassthroughBehavior.NEVER,
+      integrationResponses: [ IntegrationResponse200, IntegrationResponse400, IntegrationResponse500 ]
+    });   
+
+    root.addMethod('GET', getValueIntegration, {
+      requestParameters: {
+        'method.request.querystring.keys': true
+      },
+      requestValidator: getValueRequestValidator,
+      methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
+    });
+
+    // #### END OF GET / - getValue - Get Single or Multiple Invoices ####
+
+
+
   }
 }

@@ -1,4 +1,4 @@
-const APIGW_ENDPOINT= process.env.APIGW_ENDPOINT || 'https://1yqzhex0t1.execute-api.ap-southeast-1.amazonaws.com/prod';
+const APIGW_ENDPOINT= process.env.APIGW_ENDPOINT || 'https://31pycb0sy6.execute-api.ap-southeast-1.amazonaws.com/prod/';
 const request = require('supertest')(APIGW_ENDPOINT);
 const _ = require('lodash');
 const util = require('util');
@@ -120,5 +120,82 @@ describe('Insert new invoice', () => {
         const res = result.body;
         expect(res).toHaveProperty('message');
         expect(res.message).toContain('Duplicate key');
+    });
+});
+
+describe.only('Retrieve invoices', () => {
+    it('can retrieve 1 invoice', async () => {
+        const result = await request
+                                .get('/')
+                                .query({
+                                    keys: 'TEST10001'
+                                })
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(typeof res).toEqual('object');
+        expect(res).toHaveProperty('quantity');
+        expect(res).toHaveProperty('date');
+        expect(res).toHaveProperty('billTo');
+        expect(res).toHaveProperty('carInfo');
+    });
+
+    it('can retrieve multiple invoices', async () => {
+        const result = await request
+                                .get('/')
+                                .query({
+                                    keys: 'TEST10001,TEST10012'
+                                })
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(Array.isArray(res)).toBe(true);
+        expect(res.length).toEqual(2);
+        res.forEach((r: Object) => {
+            expect(r).toHaveProperty('quantity');
+            expect(r).toHaveProperty('date');
+            expect(r).toHaveProperty('billTo');
+            expect(r).toHaveProperty('carInfo');
+        });
+    });
+
+    it('cannot retrieve more than 32 invoices at the same time', async () => {
+        const result = await request
+                                .get('/')
+                                .query({
+                                    keys: 'TEST10001,TEST10012,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG'
+                                })
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Maximum number of keys (32) exceeded');
+
+    });
+
+    it('cannot retrieve invoices that do not exist', async () => {
+        const result = await request
+                                .get('/')
+                                .query({
+                                    keys: 'A,B'
+                                })
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Unable to find documents with specified keys');
+    });
+
+    it('cannot retrieve invoices without "keys" query string', async () => {
+        const result = await request
+                                .get('/')
+                                .query({
+                                    key: 'TEST10001'
+                                })
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Missing required request parameters');
     });
 });

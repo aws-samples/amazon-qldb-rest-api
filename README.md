@@ -60,10 +60,12 @@ npm test
 ### Manual Testing Example
 
 ```bash
-ENDPOINT=https://1yqzhex0t1.execute-api.ap-southeast-1.amazonaws.com/prod
+ENDPOINT=https://31pycb0sy6.execute-api.ap-southeast-1.amazonaws.com/prod
 
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '[{"key": "INVOICE194","value": {"date": "2021-05-22","billTo": "ABC Car Dealer Pte Ltd","carInfo": {"model": "Honda","make": "Jazz","year": 2021,"unitPrice": 89000},"quantity": 10}},{"key": "INVOICE114","value": {"date": "2021-05-22","billTo": "XYZ Car Dealer Pte Ltd","carInfo": {"model": "Honda","make": "Brio","year": 2019,"unitPrice": 50000},"quantity": 14}}]' \
    $ENDPOINT
+
+curl $ENDPOINT/?keys=TEST10001,TEST10012
 ```
