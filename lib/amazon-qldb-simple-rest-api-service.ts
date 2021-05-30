@@ -154,6 +154,21 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
         'application/json': errorResponseModel
       }
     };
+
+    // Cannot use requestValidationOptions more than once due to bug - https://github.com/aws/aws-cdk/issues/14684
+    const validateBodyQueryStringAndHeader = new RequestValidator(this, 'validateBodyQueryStringAndHeader', {
+      restApi: api, 
+      requestValidatorName: 'Validate body, query string parameters, and headers',
+      validateRequestBody: true,
+      validateRequestParameters: true
+    });
+
+    const validateQueryStringAndHeader = new RequestValidator(this, 'validateQueryStringAndHeader', {
+      restApi: api, 
+      requestValidatorName: 'Validate query string parameters and headers',
+      validateRequestBody: false,
+      validateRequestParameters: true
+    });
     
     // #### POST / - setValue - Create Single or Multiple Invoices ####
     const setValueModel = api.addModel('SetValueModel', {
@@ -215,11 +230,12 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       requestModels: {
         'application/json': setValueModel
       },
-      requestValidatorOptions: {
-        requestValidatorName: 'Validate body, query string parameters, and headers',
-        validateRequestBody: true,
-        validateRequestParameters: true
-      },
+      requestValidator: validateBodyQueryStringAndHeader,
+      // requestValidatorOptions: {
+      //   requestValidatorName: 'Validate body, query string parameters, and headers',
+      //   validateRequestBody: true,
+      //   validateRequestParameters: true
+      // },
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
     // #### END OF POST / - setValue - Create Single or Multiple Invoices ####
@@ -235,14 +251,6 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
         #end
        ]
     }`;
-
-    // Cannot use requestValidationOptions more than once due to bug - https://github.com/aws/aws-cdk/issues/14684
-    const validateQueryStringAndHeader = new RequestValidator(this, 'validateQueryStringAndHeader', {
-      restApi: api, 
-      requestValidatorName: 'Validate query string parameters and headers',
-      validateRequestBody: false,
-      validateRequestParameters: true
-    });
 
     const getValueIntegration = new LambdaIntegration(backend, {
       proxy: false,
@@ -330,5 +338,85 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
     // #### END OF GET /metadata-by-doc - getMetadataByDoc - Get Metadata by DocId and TxId ####
+
+    // #### POST /verify - verifyMetadata - Verify Metadata ####
+    const verifyMetadataResource = api.root.addResource('verify');
+
+    const verifyMetadataModel = api.addModel('VerifyMetadataModel', {
+      contentType: 'application/json',
+      modelName: 'VerifyMetadataModel',
+      schema: {
+        schema: JsonSchemaVersion.DRAFT4,
+        title: 'VerifyMetadataModel',  
+        type: JsonSchemaType.OBJECT,
+        additionalProperties: false,
+        required: ['LedgerName', 'TableName', 'BlockAddress', 'DocumentId', 'RevisionHash','LedgerDigest'],
+        properties: {
+            LedgerName: { type: JsonSchemaType.STRING },
+            TableName: { type: JsonSchemaType.STRING },
+            BlockAddress: { 
+              type: JsonSchemaType.OBJECT,
+              additionalProperties: false,
+              required: ['IonText'],
+              properties: {
+                IonText: { type: JsonSchemaType.STRING },
+              }
+            },
+            DocumentId: { 
+              type: JsonSchemaType.STRING,
+              minLength: 22,
+              maxLength: 22, 
+            },
+            RevisionHash: { type: JsonSchemaType.STRING },
+            Proof: { 
+              type: JsonSchemaType.OBJECT,
+              additionalProperties: false,
+              required: ['IonText'],
+              properties: {
+                IonText: { type: JsonSchemaType.STRING },
+              }
+            },
+            LedgerDigest: { 
+              type: JsonSchemaType.OBJECT,
+              additionalProperties: false,
+              required: ['Digest','DigestTipAddress'],
+              properties: {
+                Digest: { type: JsonSchemaType.STRING },
+                DigestTipAddress: {
+                  type: JsonSchemaType.OBJECT,
+                  additionalProperties: false,
+                  required: ['IonText'],
+                  properties: {
+                    IonText: { type: JsonSchemaType.STRING },
+                  }
+                }
+              }
+            },
+          }
+      }
+    });
+
+    const verifyMetadataIntegration = new LambdaIntegration(backend, {
+      proxy: false,
+      requestParameters: {},
+      allowTestInvoke: true,
+      requestTemplates: {
+        'application/json': '{"ops":"verifyMetadata","payload":$input.json("$")}'
+      },
+      passthroughBehavior: PassthroughBehavior.NEVER,
+      integrationResponses: [ IntegrationResponse200, IntegrationResponse400, IntegrationResponse500 ]
+    });
+    
+    verifyMetadataResource.addMethod('POST', verifyMetadataIntegration, {
+      requestParameters: {
+        'method.request.header.Content-Type': true
+      },
+      requestModels: {
+        'application/json': verifyMetadataModel
+      },
+      requestValidator: validateBodyQueryStringAndHeader,
+      methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
+    });
+    // #### END OF POST /verify - verifyMetadata - Verify Metadata ####
   }
 }

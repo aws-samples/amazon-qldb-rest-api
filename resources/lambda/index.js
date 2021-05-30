@@ -1,5 +1,5 @@
 const { QLDBKVS } = require('amazon-qldb-kvs-nodejs');
-const { getValue, getValues, setValue, setValues, getMetadataByDoc, getMetadataByKey } = require('./resolvers');
+const { getValue, getValues, setValue, setValues, getMetadataByDoc, getMetadataByKey, verifyMetadata } = require('./resolvers');
 const parseErrorMessage = require('./errorHandler');
 const util = require('util');
 
@@ -49,6 +49,11 @@ const main = async (event, context) => {
 
             case "getMetadataByDoc":
                 res = await getMetadataByDoc(qldbKVS, payload.docId, payload.txId);
+                console.log(util.inspect(res, {depth: 3}));
+                return res;
+            
+            case "verifyMetadata":
+                res = await verifyMetadata(qldbKVS, payload);
                 console.log(util.inspect(res, {depth: 3}));
                 return res;
 

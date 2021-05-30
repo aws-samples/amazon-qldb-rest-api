@@ -1,4 +1,4 @@
-const APIGW_ENDPOINT= process.env.APIGW_ENDPOINT || 'https://s1f6jernw2.execute-api.ap-southeast-1.amazonaws.com/prod/';
+const APIGW_ENDPOINT= process.env.APIGW_ENDPOINT || 'https://qq9mkwirmd.execute-api.ap-southeast-1.amazonaws.com/prod/';
 const request = require('supertest')(APIGW_ENDPOINT);
 const _ = require('lodash');
 const util = require('util');
@@ -301,4 +301,131 @@ describe('Get invoice metadata by docId and txId', () => {
         expect(res).toHaveProperty('message');
         expect(res.message).toContain('Missing required request parameters');
     });
+});
+
+describe('Verify invoice metadata', () => {
+    let metadata = {};
+
+    beforeAll(async () => {
+        const res = await request.get('/metadata-by-key')
+        .query({
+           key: 'TEST10001'
+        });
+        expect(res.statusCode).toEqual(200);
+        metadata = res.body;
+    });
+
+    it('can verify 1 invoice metadata', async () => {
+        
+        const res = await request
+                                .post('/verify')
+                                .send(_.cloneDeep(metadata))
+                                .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(200);
+        const result = res.body;
+        expect(typeof result).toEqual('object');
+        expect(result).toHaveProperty('result');
+    });
+
+    it('cannot verify invoice metadata with improper format', async () => {
+        const result = await request
+                                .post('/verify')
+                                .send({})
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Invalid request body');
+    });
+
+    it('cannot verify invoice metadata with incorrect block address', async () => {
+        const m = _.cloneDeep(metadata);
+
+        m.BlockAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 3}"
+
+        const result = await request
+                                .post('/verify')
+                                .send(m)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('The Strand ID of the provided block address is not valid');
+    });
+
+    it('cannot verify invoice metadata with incorrect documentId', async () => {
+        const m = _.cloneDeep(metadata);
+
+        m.DocumentId = 'abcdefghijklmnopqstuvw';
+
+        const result = await request
+                                .post('/verify')
+                                .send(m)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('The provided Document ID was not found');
+    });
+
+    it('cannot verify invoice metadata with incorrect documentId length (not 22 characters)', async () => {
+        const m = _.cloneDeep(metadata);
+
+        m.DocumentId = 'XYZ';
+
+        const result = await request
+                                .post('/verify')
+                                .send(m)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Invalid request body');
+    });
+
+    it('cannot verify invoice metadata with incorrect revision hash', async () => {
+        const m = _.cloneDeep(metadata);
+
+        m.RevisionHash = 'abcdefghijklmnopqstuvw';
+
+        const result = await request
+                                .post('/verify')
+                                .send(m)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Revision hashes do not match');
+    });
+
+    it('cannot verify invoice metadata with incorrect ledger digest', async () => {
+        const m = _.cloneDeep(metadata);
+
+        m.LedgerDigest.Digest = 'abcdefghijklmnopqstuvw';
+
+        const result = await request
+                                .post('/verify')
+                                .send(m)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Document revision is not verified');
+    });
+
+    it('cannot verify invoice metadata with incorrect digest tip address', async () => {
+        const m = _.cloneDeep(metadata);
+
+        m.LedgerDigest.DigestTipAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 8}"
+
+        const result = await request
+                                .post('/verify')
+                                .send(m)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('The Strand ID of the provided block address is not valid');
+    });
+
 });
