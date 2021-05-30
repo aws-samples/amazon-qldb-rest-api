@@ -1,5 +1,5 @@
 const { QLDBKVS } = require('amazon-qldb-kvs-nodejs');
-const { getValue, getValues, setValue, setValues, getMetadataByDoc, getMetadataByKey, verifyMetadata } = require('./resolvers');
+const { getValue, getValues, setValue, setValues, getMetadataByDoc, getMetadataByKey, verifyMetadata, getHistory } = require('./resolvers');
 const parseErrorMessage = require('./errorHandler');
 const util = require('util');
 
@@ -54,6 +54,11 @@ const main = async (event, context) => {
             
             case "verifyMetadata":
                 res = await verifyMetadata(qldbKVS, payload);
+                console.log(util.inspect(res, {depth: 3}));
+                return res;
+            
+            case "getHistory":
+                res = await getHistory(qldbKVS, payload[0]); //only get history for 1 key is supported for now
                 console.log(util.inspect(res, {depth: 3}));
                 return res;
 

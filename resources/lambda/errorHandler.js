@@ -1,8 +1,11 @@
-// Make error messages more meaningful and less verbose without modifying NPM dependency
+// Make error messages more meaningful and less verbose without modifying qldb-lambda-kvs dependency
 // TODO: Probably fix this in the dependency - this breaks supertest due to ' special character
 const parseErrorMessage = (error) => {
     let msg = error.message || error.toString();
 
+    /*
+        Errors for getValue
+    */
     if(msg.includes('We should retrieve not more then 32 keys at a time')) 
         msg = 'Client Error: Maximum number of keys (32) exceeded';
     
@@ -18,6 +21,9 @@ const parseErrorMessage = (error) => {
         msg = `Client Error: Unable to find documents with specified keys: ${msgSplit[1]}`;
     }
 
+    /*
+        Errors for getMetadata
+    */
     if(msg.includes('Can\'t find block address and document id associated with \"_key\"')) {
         const msgSplit = msg.split('[QLDBKVS.getMetadata] Requested record does not exist: [GetRevision getDocumentLedgerMetadata] Can\'t find block address and document id associated with \"_key\" =');
         msg = `Client Error: Unable to find block address and document id associated with key: ${msgSplit[1]}`;
@@ -28,6 +34,9 @@ const parseErrorMessage = (error) => {
         msg = `Client Error: Unable to find revision metadata for ${msgSplit[1]}`;
     }
 
+    /*
+        Errors for verifyMetadta
+    */
     if(msg.includes('The provided block address is not valid')) {
         //[QLDBKVS.verifyMetadata] Requested record does not exist: [VerifyDocumentMetadata verifyDocumentMetadataWithUserData] [GetRevision getRevision] InvalidParameterException: The provided block address is not valid 
         msg = `Client Error: The provided block address is not valid`;
@@ -52,6 +61,15 @@ const parseErrorMessage = (error) => {
     if(msg.includes('The Strand ID of the provided block address is not valid')){
     //[QLDBKVS.verifyMetadata] Requested record does not exist: [VerifyDocumentMetadata verifyDocumentMetadataWithUserData] [GetRevision getRevision] InvalidParameterException: The Strand ID of the provided block address is not valid 
         msg = `Client Error: The Strand ID of the provided block address is not valid`;
+    }
+
+    /*
+        Errors for getHistory
+    */
+    if(msg.includes('Unable to retrieve document ID')) {
+        //[QLDBKVS.getHistory] Requested record does not exist: Error: [GetDocumentHistory.getDocumentRevisionByIdAndBlock] Error: [Util.getDocumentIds] Unable to retrieve document ID using A.
+        const msgSplit = msg.split('[QLDBKVS.getHistory] Requested record does not exist: Error: [GetDocumentHistory.getDocumentRevisionByIdAndBlock] Error: [Util.getDocumentIds]');
+        msg = `Client Error: ${msgSplit[1]}`;
     }
 
     return new Error(msg);

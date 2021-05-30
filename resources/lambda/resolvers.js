@@ -41,12 +41,19 @@ const verifyMetadata = async (qldbKVSDriver, metadata) => {
     }
 }
 
+const getHistory = async (qldbKVSDriver, key) => {
+    const data = await qldbKVSDriver.getHistory(key);
+    return data;
+}
+
 module.exports.getValue = getValue;
 module.exports.getValues = getValues;
 module.exports.setValue = setValue;
 module.exports.setValues = setValues;
 
 module.exports.getMetadataByKey = getMetadataByKey;
+
+module.exports.getHistory = getHistory;
 
 module.exports.getMetadataByDoc = getMetadataByDoc;
 

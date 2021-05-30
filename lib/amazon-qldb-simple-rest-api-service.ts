@@ -418,5 +418,39 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
     // #### END OF POST /verify - verifyMetadata - Verify Metadata ####
+
+    // #### GET /history - history - Get History for Invoice ####
+    const getHistoryResource = api.root.addResource('history');
+
+    const getHistoryRequestTemplate = `
+    #set($v = $util.escapeJavaScript($input.params("keys")))
+    #set($valueArray = $v.split(","))
+    {
+        "ops": "getHistory",
+        "payload": [#foreach($item in $valueArray)
+        "$item"#if($foreach.hasNext),#end
+        #end
+        ]
+    }`;
+
+    const getHistoryIntegration = new LambdaIntegration(backend, {
+      proxy: false,
+      requestParameters: {},
+      allowTestInvoke: true,
+      requestTemplates: {
+        'application/json': getHistoryRequestTemplate
+      },
+      passthroughBehavior: PassthroughBehavior.NEVER,
+      integrationResponses: [ IntegrationResponse200, IntegrationResponse400, IntegrationResponse500 ]
+    });   
+
+    getHistoryResource.addMethod('GET', getHistoryIntegration, {
+      requestParameters: {
+        'method.request.querystring.keys': true
+      },
+      requestValidator: validateQueryStringAndHeader,
+      methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
+    });
+    // #### GET /history - history - Get History for Invoice ####
   }
 }

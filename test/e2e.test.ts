@@ -429,3 +429,46 @@ describe('Verify invoice metadata', () => {
     });
 
 });
+
+describe('Retrieve invoice history', () => {
+    it('can retrieve 1 invoice history', async () => {
+        const result = await request
+                                .get('/history')
+                                .query({
+                                    keys: 'TEST10001'
+                                })
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(Array.isArray(res)).toBe(true);
+        res.forEach((r: Object) => {
+            expect(r).toHaveProperty('blockAddress');
+            expect(r).toHaveProperty('hash');
+            expect(r).toHaveProperty('data');
+            expect(r).toHaveProperty('metadata');
+        });
+    });
+
+    it('cannot retrieve history for invoice that do not exist', async () => {
+        const result = await request
+                                .get('/history')
+                                .query({
+                                    keys: 'A'
+                                })
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Unable to retrieve document ID');
+    });
+
+    it('cannot retrieve invoices without "keys" query string', async () => {
+        const result = await request
+                                .get('/history')
+                                .query({
+                                    key: 'TEST10001'
+                                })
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Missing required request parameters');
+    });
+});
