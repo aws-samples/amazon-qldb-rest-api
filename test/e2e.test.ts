@@ -1,4 +1,4 @@
-const APIGW_ENDPOINT= process.env.APIGW_ENDPOINT || 'https://qq9mkwirmd.execute-api.ap-southeast-1.amazonaws.com/prod/';
+const APIGW_ENDPOINT= process.env.APIGW_ENDPOINT;
 const request = require('supertest')(APIGW_ENDPOINT);
 const _ = require('lodash');
 const util = require('util');

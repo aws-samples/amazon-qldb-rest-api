@@ -41,19 +41,11 @@ Install dependencies
 npm ci
 ```
 
-Set API endpoint URL in line 1 of [test/e2e.test.ts](test/e2e.test.ts)
-
-**Note: Still trying to figure out how to inject environment variable to Jest**
-
-```js
-//Insert the API Gateway Endpoint URL
-const APIGW_ENDPOINT= process.env.APIGW_ENDPOINT || 'https://1yqzhex0t1.execute-api.ap-southeast-1.amazonaws.com/prod';
-```
-
 Run test
 
 ```bash
-npm test
+# Change the API Gateway Endpoint URL
+APIGW_ENDPOINT=https://qq9mkwirmd.execute-api.ap-southeast-1.amazonaws.com/prod npm test
 ```
 
 ### Manual Testing Example
