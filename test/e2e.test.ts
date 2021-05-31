@@ -31,6 +31,7 @@ describe('Insert new invoice', () => {
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(200);
         const res = result.body;
+        expect(typeof res).toEqual('object');
         expect(res).toHaveProperty('documentId');
         expect(res).toHaveProperty('txId');
     });
@@ -51,7 +52,10 @@ describe('Insert new invoice', () => {
         expect(result.statusCode).toEqual(200);
         const res = result.body;
         expect(Array.isArray(res)).toBe(true);
-        //TODO: Once array in array issue is fixed
+        res.forEach((r: Object) => {
+            expect(r).toHaveProperty('documentId');
+            expect(r).toHaveProperty('txId');
+        });
     });
 
     it('cannot insert 0 invoice', async () => {
