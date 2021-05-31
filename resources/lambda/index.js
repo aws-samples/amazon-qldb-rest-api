@@ -25,8 +25,7 @@ const main = async (event, context) => {
                 } else {
                     res = await getValues(qldbKVS, payload);
                 }
-                console.log(util.inspect(res, {depth: 3}));
-                return res;
+                break;
 
             case "setValue":
                 if (payload.length == 1) {
@@ -39,32 +38,30 @@ const main = async (event, context) => {
                     const valueArray = payload.map ( p => { return p.value });
                     res = await setValues(qldbKVS, keyArray, valueArray);
                 }
-                console.log(util.inspect(res, {depth: 3}));
-                return res;
+                break;
             
             case "getMetadataByKey":
                 res = await getMetadataByKey(qldbKVS, payload.key);
-                console.log(util.inspect(res, {depth: 3}));
-                return res;
+                break;
 
             case "getMetadataByDoc":
                 res = await getMetadataByDoc(qldbKVS, payload.docId, payload.txId);
-                console.log(util.inspect(res, {depth: 3}));
-                return res;
+                break;
             
             case "verifyMetadata":
                 res = await verifyMetadata(qldbKVS, payload);
-                console.log(util.inspect(res, {depth: 3}));
-                return res;
+                break;
             
             case "getHistory":
                 res = await getHistory(qldbKVS, payload[0]); //only get history for 1 key is supported for now
-                console.log(util.inspect(res, {depth: 3}));
-                return res;
+                break;
 
             default:
                 throw new Error(`Server Error: Operation ${ops} is not supported.`);
         }
+
+        console.log(util.inspect(res, {depth: 3}));
+        return res;
 
     } catch (error) {
         const msg = parseErrorMessage(error);
