@@ -19,13 +19,17 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 `./devops/build-lambda.sh`
 
-2. Bootstrap account with CDK resources
+2. Bootstrap account with CDK resources (need to be done only once)
 
 `./devops/cdk-bootstrap-to.sh 451823959762 ap-southeast-1`
 
 3. Deploy all to the account of choice
 
 `./devops/cdk-deploy-to.sh 451823959762 ap-southeast-1`
+
+(Optional) To set QLDB ledger and table name:
+
+`LEDGER_NAME=ledger1 TABLE_NAME=invoices ./devops/cdk-deploy-to.sh 451823959762 ap-southeast-1`
 
 4. Clean up
 

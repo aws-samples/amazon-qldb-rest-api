@@ -3,8 +3,8 @@ const { getValue, getValues, setValue, setValues, getMetadataByDoc, getMetadataB
 const parseErrorMessage = require('./errorHandler');
 const util = require('util');
 
-const LEDGER_NAME = process.env.LEDGER_NAME ? process.env.LEDGER_NAME : "keyvaluestore";
-const TABLE_NAME = process.env.TABLE_NAME ? process.env.TABLE_NAME : "keyvaluedata";
+const LEDGER_NAME = process.env.LEDGER_NAME || 'keyvaluestore';
+const TABLE_NAME = process.env.TABLE_NAME || 'keyvaluedata';
 
 const qldbKVS = new QLDBKVS(LEDGER_NAME, TABLE_NAME);
 
