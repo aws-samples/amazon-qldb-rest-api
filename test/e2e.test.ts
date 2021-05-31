@@ -31,11 +31,9 @@ describe('Insert new invoice', () => {
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(200);
         const res = result.body;
-        expect(Array.isArray(res)).toBe(true);
-        res.forEach((r: Object) => {
-            expect(r).toHaveProperty('documentId');
-            expect(r).toHaveProperty('txId');
-        });
+        expect(typeof res).toEqual('object');
+        expect(res).toHaveProperty('documentId');
+        expect(res).toHaveProperty('txId');
     });
 
     it('can insert 2 invoices', async () => {
@@ -54,7 +52,10 @@ describe('Insert new invoice', () => {
         expect(result.statusCode).toEqual(200);
         const res = result.body;
         expect(Array.isArray(res)).toBe(true);
-        //TODO: Once array in array issue is fixed
+        res.forEach((r: Object) => {
+            expect(r).toHaveProperty('documentId');
+            expect(r).toHaveProperty('txId');
+        });
     });
 
     it('cannot insert 0 invoice', async () => {
@@ -257,8 +258,8 @@ describe('Get invoice metadata by docId and txId', () => {
                                 .set('Content-Type', 'application/json');
         
         expect(info.statusCode).toEqual(200);
-        const docId = info.body[0].documentId;
-        const txId = info.body[0].txId;
+        const docId = info.body.documentId;
+        const txId = info.body.txId;
 
         const result = await request
                                 .get('/metadata-by-doc')
