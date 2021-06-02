@@ -348,7 +348,7 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
         title: 'VerifyMetadataModel',  
         type: JsonSchemaType.OBJECT,
         additionalProperties: false,
-        required: ['LedgerName', 'TableName', 'BlockAddress', 'DocumentId', 'RevisionHash','LedgerDigest'],
+        required: ['BlockAddress', 'DocumentId', 'RevisionHash','LedgerDigest'],
         properties: {
             LedgerName: { type: JsonSchemaType.STRING },
             TableName: { type: JsonSchemaType.STRING },
@@ -416,6 +416,86 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
     // #### END OF POST /verify - verifyMetadata - Verify Metadata ####
+
+    // #### POST /revision - getRevisionByMetadata - Get Document Revision by Metadata ####
+    const getRevisionByMetadataResource = api.root.addResource('revision');
+
+    const getRevisionByMetadataModel = api.addModel('GetRevisionByMetadataModel', {
+      contentType: 'application/json',
+      modelName: 'GetRevisionByMetadataModel',
+      schema: {
+        schema: JsonSchemaVersion.DRAFT4,
+        title: 'GetRevisionByMetadataModel',  
+        type: JsonSchemaType.OBJECT,
+        additionalProperties: false,
+        required: ['BlockAddress', 'DocumentId','LedgerDigest'],
+        properties: {
+            LedgerName: { type: JsonSchemaType.STRING },
+            TableName: { type: JsonSchemaType.STRING },
+            BlockAddress: { 
+              type: JsonSchemaType.OBJECT,
+              additionalProperties: false,
+              required: ['IonText'],
+              properties: {
+                IonText: { type: JsonSchemaType.STRING },
+              }
+            },
+            DocumentId: { 
+              type: JsonSchemaType.STRING,
+              minLength: 22,
+              maxLength: 22, 
+            },
+            RevisionHash: { type: JsonSchemaType.STRING },
+            Proof: { 
+              type: JsonSchemaType.OBJECT,
+              additionalProperties: false,
+              required: ['IonText'],
+              properties: {
+                IonText: { type: JsonSchemaType.STRING },
+              }
+            },
+            LedgerDigest: { 
+              type: JsonSchemaType.OBJECT,
+              additionalProperties: false,
+              required: ['DigestTipAddress'],
+              properties: {
+                Digest: { type: JsonSchemaType.STRING },
+                DigestTipAddress: {
+                  type: JsonSchemaType.OBJECT,
+                  additionalProperties: false,
+                  required: ['IonText'],
+                  properties: {
+                    IonText: { type: JsonSchemaType.STRING },
+                  }
+                }
+              }
+            },
+          }
+      }
+    });
+
+    const getRevisionByMetadataIntegration = new LambdaIntegration(backend, {
+      proxy: false,
+      requestParameters: {},
+      allowTestInvoke: true,
+      requestTemplates: {
+        'application/json': '{"ops":"getDocumentRevisionByMetadata","payload":$input.json("$")}'
+      },
+      passthroughBehavior: PassthroughBehavior.NEVER,
+      integrationResponses: [ IntegrationResponse200, IntegrationResponse400, IntegrationResponse500 ]
+    });
+    
+    getRevisionByMetadataResource.addMethod('POST', getRevisionByMetadataIntegration, {
+      requestParameters: {
+        'method.request.header.Content-Type': true
+      },
+      requestModels: {
+        'application/json': getRevisionByMetadataModel
+      },
+      requestValidator: validateBodyQueryStringAndHeader,
+      methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
+    });
+    // #### END OF /revision - getRevisionByMetadata - Get Document Revision by Metadata ####
 
     // #### GET /history - history - Get History for Invoice ####
     const getHistoryResource = api.root.addResource('history');

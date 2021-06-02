@@ -52,6 +52,10 @@ const main = async (event, context) => {
                 res = { result: 'valid' };
                 break;
             
+            case 'getDocumentRevisionByMetadata':
+                res = await qldbKVS.getDocumentRevisionByMetadata(payload);
+                break;
+            
             case "getHistory":
                 res = await qldbKVS.getHistory(payload);
                 break;

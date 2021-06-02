@@ -431,6 +431,104 @@ describe('Verify invoice metadata', () => {
 
 });
 
+describe('Get document revision by metadata', () => {
+    let metadata = {};
+
+    beforeAll(async () => {
+        const res = await request.get('/metadata-by-key')
+        .query({
+           key: 'TEST10001'
+        });
+        expect(res.statusCode).toEqual(200);
+        metadata = res.body;
+    });
+
+    it('can retrieve 1 document revision by metadata', async () => {
+        
+        const res = await request
+                                .post('/revision')
+                                .send(_.cloneDeep(metadata))
+                                .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(200);
+        const result = res.body;
+        expect(typeof result).toEqual('object');
+        expect(result).toHaveProperty('Proof');
+        expect(result).toHaveProperty('Revision');
+    });
+
+    it('cannot retrieve document revision with improper format', async () => {
+        const result = await request
+                                .post('/revision')
+                                .send({})
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Invalid request body');
+    });
+
+    it('cannot retrieve document revision with incorrect block address', async () => {
+        const m = _.cloneDeep(metadata);
+
+        m.BlockAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 3}"
+
+        const result = await request
+                                .post('/revision')
+                                .send(m)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Could not get document revision');
+    });
+
+    it('cannot retrieve document revision with incorrect documentId', async () => {
+        const m = _.cloneDeep(metadata);
+
+        m.DocumentId = 'abcdefghijklmnopqstuvw';
+
+        const result = await request
+                                .post('/revision')
+                                .send(m)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Could not get document revision');
+    });
+
+    it('cannot retrieve document revision with incorrect documentId length (not 22 characters)', async () => {
+        const m = _.cloneDeep(metadata);
+
+        m.DocumentId = 'XYZ';
+
+        const result = await request
+                                .post('/revision')
+                                .send(m)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Invalid request body');
+    });
+
+    it('cannot retrieve document revision with incorrect digest tip address', async () => {
+        const m = _.cloneDeep(metadata);
+
+        m.LedgerDigest.DigestTipAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 8}"
+
+        const result = await request
+                                .post('/revision')
+                                .send(m)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Could not get document revision');
+    });
+
+});
+
 describe('Retrieve invoice history', () => {
     it('can retrieve 1 invoice history', async () => {
         const result = await request
