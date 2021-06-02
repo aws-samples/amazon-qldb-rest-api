@@ -170,7 +170,7 @@ describe('Retrieve invoices', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Maximum number of keys (32) exceeded');
+        expect(res.message).toContain('Requested records do not exist');
 
     });
 
@@ -184,7 +184,7 @@ describe('Retrieve invoices', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Unable to find documents with specified keys');
+        expect(res.message).toContain('Requested records do not exist');
     });
 
     it('cannot retrieve invoices without "keys" query string', async () => {
@@ -228,7 +228,7 @@ describe('Get invoice metadata by key', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain("Unable to find block address and document id");
+        expect(res.message).toContain('Could not get metadata');
     });
 
     it('cannot retrieve metadata without "key" query string', async () => {
@@ -288,7 +288,7 @@ describe('Get invoice metadata by docId and txId', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain("Unable to find revision metadata");
+        expect(res.message).toContain('Could not get metadata');
     });
 
     it('cannot retrieve metadata without "docId" and/or "txId" query string', async () => {
@@ -351,7 +351,7 @@ describe('Verify invoice metadata', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('The Strand ID of the provided block address is not valid');
+        expect(res.message).toContain('Could not verify the metadta');
     });
 
     it('cannot verify invoice metadata with incorrect documentId', async () => {
@@ -366,7 +366,7 @@ describe('Verify invoice metadata', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('The provided Document ID was not found');
+        expect(res.message).toContain('Could not verify the metadta');
     });
 
     it('cannot verify invoice metadata with incorrect documentId length (not 22 characters)', async () => {
@@ -396,7 +396,7 @@ describe('Verify invoice metadata', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Revision hashes do not match');
+        expect(res.message).toContain('Could not verify the metadta');
     });
 
     it('cannot verify invoice metadata with incorrect ledger digest', async () => {
@@ -411,7 +411,7 @@ describe('Verify invoice metadata', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Document revision is not verified');
+        expect(res.message).toContain('Could not verify the metadta');
     });
 
     it('cannot verify invoice metadata with incorrect digest tip address', async () => {
@@ -426,7 +426,7 @@ describe('Verify invoice metadata', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('The Strand ID of the provided block address is not valid');
+        expect(res.message).toContain('Could not verify the metadta');
     });
 
 });
@@ -436,7 +436,7 @@ describe('Retrieve invoice history', () => {
         const result = await request
                                 .get('/history')
                                 .query({
-                                    keys: 'TEST10001'
+                                    key: 'TEST10001'
                                 })
         expect(result.statusCode).toEqual(200);
         const res = result.body;
@@ -453,19 +453,19 @@ describe('Retrieve invoice history', () => {
         const result = await request
                                 .get('/history')
                                 .query({
-                                    keys: 'A'
+                                    key: 'A'
                                 })
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Unable to retrieve document ID');
+        expect(res.message).toContain('Could not get history');
     });
 
-    it('cannot retrieve invoices without "keys" query string', async () => {
+    it('cannot retrieve invoices without "key" query string', async () => {
         const result = await request
                                 .get('/history')
                                 .query({
-                                    key: 'TEST10001'
+                                    keys: 'TEST10001'
                                 })
         expect(result.statusCode).toEqual(400);
         const res = result.body;
