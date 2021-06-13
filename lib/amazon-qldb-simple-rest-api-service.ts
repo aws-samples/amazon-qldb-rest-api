@@ -195,7 +195,7 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
                 billTo: { type: JsonSchemaType.STRING },
                 paymentStatus: {
                   type: JsonSchemaType.STRING,
-                  enum: ['PENDING', 'PAID']
+                  enum: ['PENDING','TRANSFERRED','CONFIRMED']
                 },
                 quantity: { type: JsonSchemaType.INTEGER },
                 carInfo: { 
