@@ -69,7 +69,7 @@ Create two invoices, `INVOICE001` and `INVOICE002`
 ```bash
 $ curl --header "Content-Type: application/json" \
   --request POST \
-  --data '[{"key": "INVOICE001","value": {"date": "2021-05-22","billTo": "ABC Car Dealer Pte Ltd","carInfo": {"model": "Honda","make": "Jazz","year": 2021,"unitPrice": 89000},"quantity": 10}},{"key": "INVOICE002","value": {"date": "2021-05-22","billTo": "XYZ Car Dealer Pte Ltd","carInfo": {"model": "Honda","make": "Brio","year": 2019,"unitPrice": 50000},"quantity": 14}}]' \
+  --data '[{"key": "INVOICE001","value": {"date": "2021-05-22","billTo": "ABC Car Dealer Pte Ltd","paymentStatus": "PENDING","carInfo": {"model": "Honda","make": "Jazz","year": 2021,"unitPrice": 89000},"quantity": 10}},{"key": "INVOICE002","value": {"date": "2021-05-22","billTo": "XYZ Car Dealer Pte Ltd","paymentStatus": "PENDING","carInfo": {"model": "Honda","make": "Brio","year": 2019,"unitPrice": 50000},"quantity": 14}}]' \
    $ENDPOINT
 
 # Take note of the `documentId` and `txId` that are returned in the response e.g.
@@ -82,7 +82,7 @@ Retrieve the previously created invoices
 $ curl ${ENDPOINT}/\?keys=INVOICE001,INVOICE002
 
 # Example response
-[{"date":"2021-05-22","billTo":"ABC Car Dealer Pte Ltd","carInfo":{"model":"Honda","make":"Jazz","year":2021,"unitPrice":89000},"quantity":10},{"date":"2021-05-22","billTo":"XYZ Car Dealer Pte Ltd","carInfo":{"model":"Honda","make":"Brio","year":2019,"unitPrice":50000},"quantity":14}]
+[{"date":"2021-05-22","billTo":"ABC Car Dealer Pte Ltd","paymentStatus": "PENDING","carInfo":{"model":"Honda","make":"Jazz","year":2021,"unitPrice":89000},"quantity":10},{"date":"2021-05-22","billTo":"XYZ Car Dealer Pte Ltd","paymentStatus": "PENDING","carInfo":{"model":"Honda","make":"Brio","year":2019,"unitPrice":50000},"quantity":14}]
 ```
 
 Get invoice `INVOICE001`'s metadata by key or by `documentId` and `txId`
@@ -114,5 +114,5 @@ View `INVOICE001`'s history
 $ curl ${ENDPOINT}/history\?keys=INVOICE001
 
 # Example response
-[{"blockAddress":{"strandId":"Dp04YYoTPCZ4Tu0fgUas6b","sequenceNo":90},"hash":"tS+8aK9q4O8z6UpmUc/XMYhQYo/qy2YDHC+mxKWKgvo=","data":{"_key":"INVOICE001","_val":"{\"date\":\"2021-05-22\",\"billTo\":\"ABC Car Dealer Pte Ltd\",\"carInfo\":{\"model\":\"Honda\",\"make\":\"Jazz\",\"year\":2021,\"unitPrice\":89000},\"quantity\":10}"},"metadata":{"id":"LNQETY3bjjRJRHUOlZITtI","version":0,"txTime":"2021-05-31T06:44:11.435Z","txId":"2JimeUCJ4KQLODhzpy1vaY"}}]
+[{"blockAddress":{"strandId":"Dp04YYoTPCZ4Tu0fgUas6b","sequenceNo":90},"hash":"tS+8aK9q4O8z6UpmUc/XMYhQYo/qy2YDHC+mxKWKgvo=","data":{"_key":"INVOICE001","_val":"{\"date\":\"2021-05-22\",\"billTo\":\"ABC Car Dealer Pte Ltd\",\"paymentStatus\": \"PENDING\",\"carInfo\":{\"model\":\"Honda\",\"make\":\"Jazz\",\"year\":2021,\"unitPrice\":89000},\"quantity\":10}"},"metadata":{"id":"LNQETY3bjjRJRHUOlZITtI","version":0,"txTime":"2021-05-31T06:44:11.435Z","txId":"2JimeUCJ4KQLODhzpy1vaY"}}]
 ```

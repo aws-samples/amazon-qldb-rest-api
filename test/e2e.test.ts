@@ -8,6 +8,7 @@ const templateInvoice = {
     "value": {
         "date": "2021-05-22",
         "billTo": "ABC Car Dealer Pte Ltd",
+        "paymentStatus": "PENDING",
         "carInfo": {
             "model": "Honda",
             "make": "Jazz",

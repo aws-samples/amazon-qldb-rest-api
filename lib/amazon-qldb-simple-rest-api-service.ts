@@ -189,10 +189,14 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
             value: {
               type: JsonSchemaType.OBJECT,
               additionalProperties: false,
-              required: ['date', 'billTo','quantity','carInfo'],
+              required: ['date', 'billTo','paymentStatus','quantity','carInfo'],
               properties: {
                 date: { type: JsonSchemaType.STRING },
                 billTo: { type: JsonSchemaType.STRING },
+                paymentStatus: {
+                  type: JsonSchemaType.STRING,
+                  enum: ['PENDING', 'PAID']
+                },
                 quantity: { type: JsonSchemaType.INTEGER },
                 carInfo: { 
                   type: JsonSchemaType.OBJECT,
@@ -231,11 +235,6 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
         'application/json': setValueModel
       },
       requestValidator: validateBodyQueryStringAndHeader,
-      // requestValidatorOptions: {
-      //   requestValidatorName: 'Validate body, query string parameters, and headers',
-      //   validateRequestBody: true,
-      //   validateRequestParameters: true
-      // },
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
     // #### END OF POST / - setValue - Create Single or Multiple Invoices ####
