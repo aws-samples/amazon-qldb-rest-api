@@ -5,6 +5,10 @@
     "amazon-qldb-simple-rest-api": "bin/amazon-qldb-simple-rest-api.js"
   },
   "scripts": {
+    "build-lambda": "./devops/build-lambda.sh",
+    "bootstrap-cdk": "./devops/cdk-bootstrap-to.sh",
+    "deploy-cdk": "./devops/cdk-deploy-to.sh",
+    "clean-cdk": "./devops/cdk-clean-from.sh",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
