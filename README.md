@@ -10,6 +10,7 @@ To deploy and test the REST APIs, you will need to fullfill the following pre-re
 
 * Install [NodeJS](https://nodejs.org/en/download/) version 12 or above
 * [Configure](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html) AWS CLI to interact with AWS account of your choice
+* Install [AWS Cloud Development Kit (CDK)](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html)
 * [jq](https://stedolan.github.io/jq/) installed
 
 ### Deploy the application resources
