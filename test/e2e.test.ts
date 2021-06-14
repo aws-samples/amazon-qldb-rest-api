@@ -202,10 +202,10 @@ describe('Retrieve invoices', () => {
     });
 });
 
-describe('Get invoice metadata by key', () => {
-    it('can get 1 invoice metadata by key', async () => {
+describe('Get invoice receipt by key', () => {
+    it('can get 1 invoice receipt by key', async () => {
         const result = await request
-                                .get('/metadata-by-key')
+                                .get('/receipt-by-key')
                                 .query({
                                     key: 'TEST10001'
                                 });
@@ -220,9 +220,9 @@ describe('Get invoice metadata by key', () => {
         expect(res).toHaveProperty('Proof');
     });
 
-    it('cannot get invoice metadata for key that does not exist', async () => {
+    it('cannot get invoice receipt for key that does not exist', async () => {
         const result = await request
-                                .get('/metadata-by-key')
+                                .get('/receipt-by-key')
                                 .query({
                                     key: 'XYZ'
                                 });
@@ -232,9 +232,9 @@ describe('Get invoice metadata by key', () => {
         expect(res.message).toContain('Could not get metadata');
     });
 
-    it('cannot retrieve metadata without "key" query string', async () => {
+    it('cannot retrieve receipt without "key" query string', async () => {
         const result = await request
-                                .get('/metadata-by-key')
+                                .get('/receipt-by-key')
                                 .query({
                                     some_other_key: 'TEST10001'
                                 })
@@ -245,8 +245,8 @@ describe('Get invoice metadata by key', () => {
     });
 });
 
-describe('Get invoice metadata by docId and txId', () => {
-    it('can get 1 invoice metadata by docId and txId', async () => {
+describe('Get invoice receipt by docId and txId', () => {
+    it('can get 1 invoice receipt by docId and txId', async () => {
 
         const invoiceNo = 'TEST40001';
         let dataArray = [];
@@ -263,7 +263,7 @@ describe('Get invoice metadata by docId and txId', () => {
         const txId = info.body.txId;
 
         const result = await request
-                                .get('/metadata-by-doc')
+                                .get('/receipt-by-doc')
                                 .query({
                                     docId: docId,
                                     txId: txId
@@ -279,9 +279,9 @@ describe('Get invoice metadata by docId and txId', () => {
         expect(res).toHaveProperty('Proof');
     });
 
-    it('cannot get invoice metadata for docId and/or txId that do not exist', async () => {
+    it('cannot get invoice receipt for docId and/or txId that do not exist', async () => {
         const result = await request
-                                .get('/metadata-by-doc')
+                                .get('/receipt-by-doc')
                                 .query({
                                     docId: 'ABC',
                                     txId: 'XYZ'
@@ -292,9 +292,9 @@ describe('Get invoice metadata by docId and txId', () => {
         expect(res.message).toContain('Could not get metadata');
     });
 
-    it('cannot retrieve metadata without "docId" and/or "txId" query string', async () => {
+    it('cannot retrieve receipt without "docId" and/or "txId" query string', async () => {
         const result = await request
-                                .get('/metadata-by-doc')
+                                .get('/receipt-by-doc')
                                 .query({
                                     some_other_key: 'TEST10001'
                                 })
@@ -305,23 +305,23 @@ describe('Get invoice metadata by docId and txId', () => {
     });
 });
 
-describe('Verify invoice metadata', () => {
-    let metadata = {};
+describe('Verify invoice receipt', () => {
+    let receipt = {};
 
     beforeAll(async () => {
-        const res = await request.get('/metadata-by-key')
+        const res = await request.get('/receipt-by-key')
         .query({
            key: 'TEST10001'
         });
         expect(res.statusCode).toEqual(200);
-        metadata = res.body;
+        receipt = res.body;
     });
 
-    it('can verify 1 invoice metadata', async () => {
+    it('can verify 1 invoice receipt', async () => {
         
         const res = await request
                                 .post('/verify')
-                                .send(_.cloneDeep(metadata))
+                                .send(_.cloneDeep(receipt))
                                 .set('Content-Type', 'application/json');
         expect(res.statusCode).toEqual(200);
         const result = res.body;
@@ -329,7 +329,7 @@ describe('Verify invoice metadata', () => {
         expect(result).toHaveProperty('result');
     });
 
-    it('cannot verify invoice metadata with improper format', async () => {
+    it('cannot verify invoice receipt with improper format', async () => {
         const result = await request
                                 .post('/verify')
                                 .send({})
@@ -340,8 +340,8 @@ describe('Verify invoice metadata', () => {
         expect(res.message).toContain('Invalid request body');
     });
 
-    it('cannot verify invoice metadata with incorrect block address', async () => {
-        const m = _.cloneDeep(metadata);
+    it('cannot verify invoice receipt with incorrect block address', async () => {
+        const m = _.cloneDeep(receipt);
 
         m.BlockAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 3}"
 
@@ -355,8 +355,8 @@ describe('Verify invoice metadata', () => {
         expect(res.message).toContain('Could not verify the metadta');
     });
 
-    it('cannot verify invoice metadata with incorrect documentId', async () => {
-        const m = _.cloneDeep(metadata);
+    it('cannot verify invoice receipt with incorrect documentId', async () => {
+        const m = _.cloneDeep(receipt);
 
         m.DocumentId = 'abcdefghijklmnopqstuvw';
 
@@ -370,8 +370,8 @@ describe('Verify invoice metadata', () => {
         expect(res.message).toContain('Could not verify the metadta');
     });
 
-    it('cannot verify invoice metadata with incorrect documentId length (not 22 characters)', async () => {
-        const m = _.cloneDeep(metadata);
+    it('cannot verify invoice receipt with incorrect documentId length (not 22 characters)', async () => {
+        const m = _.cloneDeep(receipt);
 
         m.DocumentId = 'XYZ';
 
@@ -385,8 +385,8 @@ describe('Verify invoice metadata', () => {
         expect(res.message).toContain('Invalid request body');
     });
 
-    it('cannot verify invoice metadata with incorrect revision hash', async () => {
-        const m = _.cloneDeep(metadata);
+    it('cannot verify invoice receipt with incorrect revision hash', async () => {
+        const m = _.cloneDeep(receipt);
 
         m.RevisionHash = 'abcdefghijklmnopqstuvw';
 
@@ -400,8 +400,8 @@ describe('Verify invoice metadata', () => {
         expect(res.message).toContain('Could not verify the metadta');
     });
 
-    it('cannot verify invoice metadata with incorrect ledger digest', async () => {
-        const m = _.cloneDeep(metadata);
+    it('cannot verify invoice receipt with incorrect ledger digest', async () => {
+        const m = _.cloneDeep(receipt);
 
         m.LedgerDigest.Digest = 'abcdefghijklmnopqstuvw';
 
@@ -415,8 +415,8 @@ describe('Verify invoice metadata', () => {
         expect(res.message).toContain('Could not verify the metadta');
     });
 
-    it('cannot verify invoice metadata with incorrect digest tip address', async () => {
-        const m = _.cloneDeep(metadata);
+    it('cannot verify invoice receipt with incorrect digest tip address', async () => {
+        const m = _.cloneDeep(receipt);
 
         m.LedgerDigest.DigestTipAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 8}"
 
@@ -432,23 +432,23 @@ describe('Verify invoice metadata', () => {
 
 });
 
-describe('Get document revision by metadata', () => {
-    let metadata = {};
+describe('Get document revision by receipt', () => {
+    let receipt = {};
 
     beforeAll(async () => {
-        const res = await request.get('/metadata-by-key')
+        const res = await request.get('/receipt-by-key')
         .query({
            key: 'TEST10001'
         });
         expect(res.statusCode).toEqual(200);
-        metadata = res.body;
+        receipt = res.body;
     });
 
-    it('can retrieve 1 document revision by metadata', async () => {
+    it('can retrieve 1 document revision by receipt', async () => {
         
         const res = await request
                                 .post('/revision')
-                                .send(_.cloneDeep(metadata))
+                                .send(_.cloneDeep(receipt))
                                 .set('Content-Type', 'application/json');
         expect(res.statusCode).toEqual(200);
         const result = res.body;
@@ -469,7 +469,7 @@ describe('Get document revision by metadata', () => {
     });
 
     it('cannot retrieve document revision with incorrect block address', async () => {
-        const m = _.cloneDeep(metadata);
+        const m = _.cloneDeep(receipt);
 
         m.BlockAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 3}"
 
@@ -484,7 +484,7 @@ describe('Get document revision by metadata', () => {
     });
 
     it('cannot retrieve document revision with incorrect documentId', async () => {
-        const m = _.cloneDeep(metadata);
+        const m = _.cloneDeep(receipt);
 
         m.DocumentId = 'abcdefghijklmnopqstuvw';
 
@@ -499,7 +499,7 @@ describe('Get document revision by metadata', () => {
     });
 
     it('cannot retrieve document revision with incorrect documentId length (not 22 characters)', async () => {
-        const m = _.cloneDeep(metadata);
+        const m = _.cloneDeep(receipt);
 
         m.DocumentId = 'XYZ';
 
@@ -514,7 +514,7 @@ describe('Get document revision by metadata', () => {
     });
 
     it('cannot retrieve document revision with incorrect digest tip address', async () => {
-        const m = _.cloneDeep(metadata);
+        const m = _.cloneDeep(receipt);
 
         m.LedgerDigest.DigestTipAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 8}"
 

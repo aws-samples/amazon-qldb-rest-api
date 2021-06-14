@@ -271,8 +271,8 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
     });
     // #### END OF GET / - getValue - Get Single or Multiple Invoices ####
 
-    // #### GET /metadata-by-key - getMetadataByKey - Get Metadata by Key ####
-    const getMetadataByKeyResource = api.root.addResource('metadata-by-key');
+    // #### GET /receipt-by-key - getMetadataByKey - Get Metadata by Key ####
+    const getMetadataByKeyResource = api.root.addResource('receipt-by-key');
 
     const getMetadataByKeyRequestTemplate = `
     #set($v = $util.escapeJavaScript($input.params("key")))
@@ -299,10 +299,10 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       requestValidator: validateQueryStringAndHeader,
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
-    // #### END OF GET /metadata-by-key - getMetadataByKey - Get Metadata by Key ####
+    // #### END OF GET /receipt-by-key - getMetadataByKey - Get Metadata by Key ####
 
-    // #### GET /metadata-by-doc - getMetadataByDoc - Get Metadata by DocId and TxId ####
-    const getMetadataByDocResource = api.root.addResource('metadata-by-doc');
+    // #### GET /receipt-by-doc - getMetadataByDoc - Get Metadata by DocId and TxId ####
+    const getMetadataByDocResource = api.root.addResource('receipt-by-doc');
 
     const getMetadataByDocRequestTemplate = `
     #set($d = $util.escapeJavaScript($input.params("docId")))
@@ -334,7 +334,7 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       requestValidator: validateQueryStringAndHeader,
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
-    // #### END OF GET /metadata-by-doc - getMetadataByDoc - Get Metadata by DocId and TxId ####
+    // #### END OF GET /receipt-by-doc - getMetadataByDoc - Get Metadata by DocId and TxId ####
 
     // #### POST /verify - verifyMetadata - Verify Metadata ####
     const verifyMetadataResource = api.root.addResource('verify');

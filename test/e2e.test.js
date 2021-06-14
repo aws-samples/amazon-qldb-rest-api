@@ -187,7 +187,7 @@ describe('Retrieve invoices', () => {
 describe('Get invoice metadata by key', () => {
     it('can get 1 invoice metadata by key', async () => {
         const result = await request
-            .get('/metadata-by-key')
+            .get('/receipt-by-key')
             .query({
             key: 'TEST10001'
         });
@@ -203,7 +203,7 @@ describe('Get invoice metadata by key', () => {
     });
     it('cannot get invoice metadata for key that does not exist', async () => {
         const result = await request
-            .get('/metadata-by-key')
+            .get('/receipt-by-key')
             .query({
             key: 'XYZ'
         });
@@ -214,7 +214,7 @@ describe('Get invoice metadata by key', () => {
     });
     it('cannot retrieve metadata without "key" query string', async () => {
         const result = await request
-            .get('/metadata-by-key')
+            .get('/receipt-by-key')
             .query({
             some_other_key: 'TEST10001'
         });
@@ -238,7 +238,7 @@ describe('Get invoice metadata by docId and txId', () => {
         const docId = info.body.documentId;
         const txId = info.body.txId;
         const result = await request
-            .get('/metadata-by-doc')
+            .get('/receipt-by-doc')
             .query({
             docId: docId,
             txId: txId
@@ -255,7 +255,7 @@ describe('Get invoice metadata by docId and txId', () => {
     });
     it('cannot get invoice metadata for docId and/or txId that do not exist', async () => {
         const result = await request
-            .get('/metadata-by-doc')
+            .get('/receipt-by-doc')
             .query({
             docId: 'ABC',
             txId: 'XYZ'
@@ -267,7 +267,7 @@ describe('Get invoice metadata by docId and txId', () => {
     });
     it('cannot retrieve metadata without "docId" and/or "txId" query string', async () => {
         const result = await request
-            .get('/metadata-by-doc')
+            .get('/receipt-by-doc')
             .query({
             some_other_key: 'TEST10001'
         });
@@ -280,7 +280,7 @@ describe('Get invoice metadata by docId and txId', () => {
 describe('Verify invoice metadata', () => {
     let metadata = {};
     beforeAll(async () => {
-        const res = await request.get('/metadata-by-key')
+        const res = await request.get('/receipt-by-key')
             .query({
             key: 'TEST10001'
         });
@@ -383,7 +383,7 @@ describe('Verify invoice metadata', () => {
 describe('Get document revision by metadata', () => {
     let metadata = {};
     beforeAll(async () => {
-        const res = await request.get('/metadata-by-key')
+        const res = await request.get('/receipt-by-key')
             .query({
             key: 'TEST10001'
         });
