@@ -31,10 +31,10 @@ npm run build-lambda
 Bootstrap account with CDK resources (Note: you will need to only do this once):
 
 ```bash
-npm run bootstrap <account name> <region name>
+npm run bootstrap-cdk <account name> <region name>
 
 # Example:
-npm run bootstrap 123456789012 ap-southeast-1
+npm run bootstrap-cdk 123456789012 ap-southeast-1
 ```
 
 Deploy resources to account. You can set LEDGER_NAME and TABLE_NAME to any value you want:
@@ -49,10 +49,10 @@ LEDGER_NAME=ledger1 TABLE_NAME=invoices npm run deploy-cdk 123456789012 ap-south
 When prompted `Do you wish to deploy these changes (y/n)?`, input **y**. Take note of the output, which is the REST API endpoint URL. You will use this URL to interact with the application. Assign this URL to an environment variable:
 
 ```bash
-ENDPOINT=https://<unique-id>.execute-api.<region name>.amazonaws.com/prod
+export APIGW_ENDPOINT=https://<unique-id>.execute-api.<region name>.amazonaws.com/prod
 
 # Example:
-ENDPOINT=https://c94rwv4we4.execute-api.ap-southeast-1.amazonaws.com/prod
+export APIGW_ENDPOINT=https://c94rwv4we4.execute-api.ap-southeast-1.amazonaws.com/prod
 ```
 
 ### Interacting with the application
