@@ -171,7 +171,7 @@ describe('Retrieve invoices', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Requested records do not exist');
+        expect(res.message).toContain('Requested documents do not exist');
 
     });
 
@@ -185,7 +185,7 @@ describe('Retrieve invoices', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Requested records do not exist');
+        expect(res.message).toContain('Requested documents do not exist');
     });
 
     it('cannot retrieve invoices without "keys" query string', async () => {
@@ -352,7 +352,7 @@ describe('Verify invoice receipt', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Could not verify the metadata');
+        expect(res.message).toContain('Could not verify the metadta');
     });
 
     it('cannot verify invoice receipt with incorrect documentId', async () => {
@@ -367,7 +367,7 @@ describe('Verify invoice receipt', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Could not verify the metadata');
+        expect(res.message).toContain('Could not verify the metadta');
     });
 
     it('cannot verify invoice receipt with incorrect documentId length (not 22 characters)', async () => {
@@ -397,7 +397,7 @@ describe('Verify invoice receipt', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Could not verify the metadata');
+        expect(res.message).toContain('Could not verify the metadta');
     });
 
     it('cannot verify invoice receipt with incorrect ledger digest', async () => {
@@ -412,7 +412,7 @@ describe('Verify invoice receipt', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Could not verify the metadata');
+        expect(res.message).toContain('Could not verify the metadta');
     });
 
     it('cannot verify invoice receipt with incorrect digest tip address', async () => {
@@ -427,7 +427,7 @@ describe('Verify invoice receipt', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Could not verify the metadata');
+        expect(res.message).toContain('Could not verify the metadta');
     });
 
 });
@@ -453,8 +453,8 @@ describe('Get document revision by receipt', () => {
         expect(res.statusCode).toEqual(200);
         const result = res.body;
         expect(typeof result).toEqual('object');
-        expect(result).toHaveProperty('Proof');
-        expect(result).toHaveProperty('Revision');
+        expect(result).toHaveProperty('data');
+        expect(result).toHaveProperty('metadata');
     });
 
     it('cannot retrieve document revision with improper format', async () => {

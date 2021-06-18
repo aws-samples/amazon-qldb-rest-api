@@ -47,13 +47,13 @@ const main = async (event, context) => {
                 res = await qldbKVS.getMetadataByDocIdAndTxId(payload.docId, payload.txId);
                 break;
             
-            case "verifyMetadata":
-                await qldbKVS.verifyMetadata(payload);
+            case "verifyLedgerMetadata":
+                await qldbKVS.verifyLedgerMetadata(payload);
                 res = { result: 'valid' };
                 break;
             
-            case 'getDocumentRevisionByMetadata':
-                res = await qldbKVS.getDocumentRevisionByMetadata(payload);
+            case 'getDocumentRevisionByLedgerMetadata':
+                res = await qldbKVS.getDocumentRevisionByLedgerMetadata(payload);
                 break;
             
             case "getHistory":

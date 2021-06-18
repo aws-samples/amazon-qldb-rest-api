@@ -336,15 +336,15 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
     });
     // #### END OF GET /receipt-by-doc - getMetadataByDoc - Get Metadata by DocId and TxId ####
 
-    // #### POST /verify - verifyMetadata - Verify Metadata ####
-    const verifyMetadataResource = api.root.addResource('verify');
+    // #### POST /verify - verifyLedgerMetadata - Verify Metadata ####
+    const verifyLedgerMetadataResource = api.root.addResource('verify');
 
-    const verifyMetadataModel = api.addModel('VerifyMetadataModel', {
+    const verifyLedgerMetadataModel = api.addModel('verifyLedgerMetadataModel', {
       contentType: 'application/json',
-      modelName: 'VerifyMetadataModel',
+      modelName: 'verifyLedgerMetadataModel',
       schema: {
         schema: JsonSchemaVersion.DRAFT4,
-        title: 'VerifyMetadataModel',  
+        title: 'verifyLedgerMetadataModel',  
         type: JsonSchemaType.OBJECT,
         additionalProperties: false,
         required: ['BlockAddress', 'DocumentId', 'RevisionHash','LedgerDigest'],
@@ -393,28 +393,28 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       }
     });
 
-    const verifyMetadataIntegration = new LambdaIntegration(backend, {
+    const verifyLedgerMetadataIntegration = new LambdaIntegration(backend, {
       proxy: false,
       requestParameters: {},
       allowTestInvoke: true,
       requestTemplates: {
-        'application/json': '{"ops":"verifyMetadata","payload":$input.json("$")}'
+        'application/json': '{"ops":"verifyLedgerMetadata","payload":$input.json("$")}'
       },
       passthroughBehavior: PassthroughBehavior.NEVER,
       integrationResponses: [ IntegrationResponse200, IntegrationResponse400, IntegrationResponse500 ]
     });
     
-    verifyMetadataResource.addMethod('POST', verifyMetadataIntegration, {
+    verifyLedgerMetadataResource.addMethod('POST', verifyLedgerMetadataIntegration, {
       requestParameters: {
         'method.request.header.Content-Type': true
       },
       requestModels: {
-        'application/json': verifyMetadataModel
+        'application/json': verifyLedgerMetadataModel
       },
       requestValidator: validateBodyQueryStringAndHeader,
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
-    // #### END OF POST /verify - verifyMetadata - Verify Metadata ####
+    // #### END OF POST /verify - verifyLedgerMetadata - Verify Metadata ####
 
     // #### POST /revision - getRevisionByMetadata - Get Document Revision by Metadata ####
     const getRevisionByMetadataResource = api.root.addResource('revision');
@@ -478,7 +478,7 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       requestParameters: {},
       allowTestInvoke: true,
       requestTemplates: {
-        'application/json': '{"ops":"getDocumentRevisionByMetadata","payload":$input.json("$")}'
+        'application/json': '{"ops":"getDocumentRevisionByLedgerMetadata","payload":$input.json("$")}'
       },
       passthroughBehavior: PassthroughBehavior.NEVER,
       integrationResponses: [ IntegrationResponse200, IntegrationResponse400, IntegrationResponse500 ]
