@@ -50,6 +50,14 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
     
     const api = new apigateway.RestApi(this, "qldb-rest-api-kvs", {
       endpointTypes: [EndpointType.REGIONAL],
+      deployOptions: {
+        methodOptions: {
+          '/*/*': {  // This special path applies to all resource paths and all HTTP methods
+            throttlingRateLimit: 10,
+            throttlingBurstLimit: 50
+          }
+        }
+      },
       restApiName: "Amazon QLDB simple key value store Service",
       description: "This service exposes a simple key-value store interace API for Amazon QLDB through REST pattern."
     });
@@ -301,16 +309,16 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
     });
     // #### END OF GET /receipt-by-key - getMetadataByKey - Get Metadata by Key ####
 
-    // #### GET /receipt-by-doc - getMetadataByDoc - Get Metadata by DocId and TxId ####
+    // #### GET /receipt-by-doc - getMetadataByDoc - Get Metadata by documentId and TxId ####
     const getMetadataByDocResource = api.root.addResource('receipt-by-doc');
 
     const getMetadataByDocRequestTemplate = `
-    #set($d = $util.escapeJavaScript($input.params("docId")))
+    #set($d = $util.escapeJavaScript($input.params("documentId")))
     #set($t = $util.escapeJavaScript($input.params("txId")))
     {
         "ops": "getMetadataByDoc",
         "payload": {
-          "docId": "$d",
+          "documentId": "$d",
           "txId": "$t"
         }
     }`;
@@ -328,13 +336,13 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
 
     getMetadataByDocResource.addMethod('GET', getMetadataByDocIntegration, {
       requestParameters: {
-        'method.request.querystring.docId': true,
+        'method.request.querystring.documentId': true,
         'method.request.querystring.txId': true
       },
       requestValidator: validateQueryStringAndHeader,
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
-    // #### END OF GET /receipt-by-doc - getMetadataByDoc - Get Metadata by DocId and TxId ####
+    // #### END OF GET /receipt-by-doc - getMetadataByDoc - Get Metadata by documentId and TxId ####
 
     // #### POST /verify - verifyLedgerMetadata - Verify Metadata ####
     const verifyLedgerMetadataResource = api.root.addResource('verify');

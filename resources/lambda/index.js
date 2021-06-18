@@ -44,7 +44,7 @@ const main = async (event, context) => {
                 break;
 
             case "getMetadataByDoc":
-                res = await qldbKVS.getMetadataByDocIdAndTxId(payload.docId, payload.txId);
+                res = await qldbKVS.getMetadataByDocIdAndTxId(payload.documentId, payload.txId);
                 break;
             
             case "verifyLedgerMetadata":

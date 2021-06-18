@@ -77,10 +77,10 @@ Save the `documentId` (Document ID) and `txId` (Transaction ID) returned. For ex
 In the example above, the `documentId` is **G3Oi84WQpSA3ppyitpjObh**. Using both the `documentId` and `txId`, the car manufacturer retrieve the receipt for the invoice:
 
 ```bash
-curl ${ENDPOINT}/receipt-by-doc\?docId=<insert documentId>\&txId=<insert txId> | jq
+curl ${ENDPOINT}/receipt-by-doc\?documentId=<insert documentId>\&txId=<insert txId> | jq
 
 # Example:
-curl ${ENDPOINT}/receipt-by-doc\?docId=G3Oi84WQpSA3ppyitpjObh\&txId=HgXB2kkD0LDL2o7OIIKSXo | jq
+curl ${ENDPOINT}/receipt-by-doc\?documentId=G3Oi84WQpSA3ppyitpjObh\&txId=HgXB2kkD0LDL2o7OIIKSXo | jq
 ```
 
 Save the receipt returned. For example,
@@ -209,7 +209,7 @@ As expected, a new `txId` is generated for the same `documentId`
 The car manufacturer also retrieves the receipt for the returned `documentId` and `txId`
 
 ```bash
-curl ${ENDPOINT}/receipt-by-doc\?docId=G3Oi84WQpSA3ppyitpjObh\&txId=KWBzGMEvU1VFRRsmrnT2NT | jq
+curl ${ENDPOINT}/receipt-by-doc\?documentId=G3Oi84WQpSA3ppyitpjObh\&txId=KWBzGMEvU1VFRRsmrnT2NT | jq
 ```
 
 Save the receipt returned. For example:

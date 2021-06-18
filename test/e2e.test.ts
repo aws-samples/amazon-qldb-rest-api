@@ -245,8 +245,8 @@ describe('Get invoice receipt by key', () => {
     });
 });
 
-describe('Get invoice receipt by docId and txId', () => {
-    it('can get 1 invoice receipt by docId and txId', async () => {
+describe('Get invoice receipt by documentId and txId', () => {
+    it('can get 1 invoice receipt by documentId and txId', async () => {
 
         const invoiceNo = 'TEST40001';
         let dataArray = [];
@@ -259,13 +259,13 @@ describe('Get invoice receipt by docId and txId', () => {
                                 .set('Content-Type', 'application/json');
         
         expect(info.statusCode).toEqual(200);
-        const docId = info.body.documentId;
+        const documentId = info.body.documentId;
         const txId = info.body.txId;
 
         const result = await request
                                 .get('/receipt-by-doc')
                                 .query({
-                                    docId: docId,
+                                    documentId: documentId,
                                     txId: txId
                                 });
         expect(result.statusCode).toEqual(200);
@@ -279,11 +279,11 @@ describe('Get invoice receipt by docId and txId', () => {
         expect(res).toHaveProperty('Proof');
     });
 
-    it('cannot get invoice receipt for docId and/or txId that do not exist', async () => {
+    it('cannot get invoice receipt for documentId and/or txId that do not exist', async () => {
         const result = await request
                                 .get('/receipt-by-doc')
                                 .query({
-                                    docId: 'ABC',
+                                    documentId: 'ABC',
                                     txId: 'XYZ'
                                 });
         expect(result.statusCode).toEqual(400);
@@ -292,7 +292,7 @@ describe('Get invoice receipt by docId and txId', () => {
         expect(res.message).toContain('Could not get metadata');
     });
 
-    it('cannot retrieve receipt without "docId" and/or "txId" query string', async () => {
+    it('cannot retrieve receipt without "documentId" and/or "txId" query string', async () => {
         const result = await request
                                 .get('/receipt-by-doc')
                                 .query({
