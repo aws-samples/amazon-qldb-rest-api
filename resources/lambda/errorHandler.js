@@ -4,7 +4,7 @@ const parseErrorMessage = (error) => {
     if(msg.includes('Requested record does not exist') || //getValue
        msg.includes('Requested records do not exist') || //getValues
        msg.includes('Could not get metadata') || //getMetadata
-       msg.includes('Could not verify the metadta') || //verifyMetadata
+       msg.includes('Could not verify the metadata') || //verifyMetadata
        msg.includes('Could not get document revision') || //getDocumentRevisionByMetadata
        msg.includes('Could not get history') //getHistory
       ) {

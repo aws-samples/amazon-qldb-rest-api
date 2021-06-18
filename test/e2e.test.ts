@@ -352,7 +352,7 @@ describe('Verify invoice receipt', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Could not verify the metadta');
+        expect(res.message).toContain('Could not verify the metadata');
     });
 
     it('cannot verify invoice receipt with incorrect documentId', async () => {
@@ -367,7 +367,7 @@ describe('Verify invoice receipt', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Could not verify the metadta');
+        expect(res.message).toContain('Could not verify the metadata');
     });
 
     it('cannot verify invoice receipt with incorrect documentId length (not 22 characters)', async () => {
@@ -397,7 +397,7 @@ describe('Verify invoice receipt', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Could not verify the metadta');
+        expect(res.message).toContain('Could not verify the metadata');
     });
 
     it('cannot verify invoice receipt with incorrect ledger digest', async () => {
@@ -412,7 +412,7 @@ describe('Verify invoice receipt', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Could not verify the metadta');
+        expect(res.message).toContain('Could not verify the metadata');
     });
 
     it('cannot verify invoice receipt with incorrect digest tip address', async () => {
@@ -427,7 +427,7 @@ describe('Verify invoice receipt', () => {
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
-        expect(res.message).toContain('Could not verify the metadta');
+        expect(res.message).toContain('Could not verify the metadata');
     });
 
 });
