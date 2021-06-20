@@ -572,3 +572,98 @@ describe('Retrieve invoice history', () => {
         expect(res.message).toContain('Missing required request parameters');
     });
 });
+
+describe('Verify document revision', () => {
+    let docRevision = {};
+
+    beforeAll(async () => {
+        const result = await request.get('/history')
+                                    .query({
+                                        key: 'TEST10001'
+                                    });
+
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(Array.isArray(res)).toBe(true);
+        res.forEach((r: Object) => {
+        expect(r).toHaveProperty('blockAddress');
+        expect(r).toHaveProperty('hash');
+        expect(r).toHaveProperty('data');
+        expect(r).toHaveProperty('metadata');
+        });
+
+        docRevision = res[0];
+    });
+
+    it('can verify 1 document revision', async () => {
+        const result = await request
+                                .post('/verify-doc-revision')
+                                .send(_.cloneDeep(docRevision))
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(typeof res).toEqual('object');
+        expect(res).toHaveProperty('result');
+        expect(res.result).toEqual('valid');
+    });
+
+    it('cannot verify document revision with improper format', async () => {
+        const result = await request
+                                .post('/verify-doc-revision')
+                                .send({})
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Invalid request body');
+    });
+
+    it('result is invalid for document revision with incorrect hash', async () => {
+        const d = _.cloneDeep(docRevision);
+
+        d.hash = 'aaa';
+
+        const result = await request
+                                .post('/verify-doc-revision')
+                                .send(d)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(typeof res).toEqual('object');
+        expect(res).toHaveProperty('result');
+        expect(res.result).toEqual('invalid');
+    });
+
+    it('result is invalid for document revision with tampered data', async () => {
+        const d = _.cloneDeep(docRevision);
+
+        d.data._k = 'aaa';
+        d.data._v = 'bbb';
+
+        const result = await request
+                                .post('/verify-doc-revision')
+                                .send(d)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(typeof res).toEqual('object');
+        expect(res).toHaveProperty('result');
+        expect(res.result).toEqual('invalid');
+    });
+
+    it('result is invalid for document revision with tampered metadata', async () => {
+        const d = _.cloneDeep(docRevision);
+
+        d.metadata.id = 'ABC';
+
+        const result = await request
+                                .post('/verify-doc-revision')
+                                .send(d)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(typeof res).toEqual('object');
+        expect(res).toHaveProperty('result');
+        expect(res.result).toEqual('invalid');
+    });
+});

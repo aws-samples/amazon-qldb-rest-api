@@ -532,6 +532,78 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       requestValidator: validateQueryStringAndHeader,
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
-    // #### GET /history - history - Get History for Invoice ####
+    // #### END OF GET /history - history - Get History for Invoice ####
+
+    // #### POST /verify-doc-revision - verifyDocumentRevisionHash - Verify Document Revision Hash ####
+    const verifyDocumentRevisionHashResource = api.root.addResource('verify-doc-revision');
+
+    const verifyDocumentRevisionHashModel = api.addModel('verifyDocumentRevisionHashModel', {
+      contentType: 'application/json',
+      modelName: 'verifyDocumentRevisionHashModel',
+      schema: {
+        schema: JsonSchemaVersion.DRAFT4,
+        title: 'verifyDocumentRevisionHashModel',  
+        type: JsonSchemaType.OBJECT,
+        additionalProperties: false,
+        required: ['hash','data','metadata'],
+        properties: {
+            blockAddress: { 
+              type: JsonSchemaType.OBJECT,
+              additionalProperties: false,
+              required: ['strandId','sequenceNo'],
+              properties: {
+                strandId: { type: JsonSchemaType.STRING },
+                sequenceNo: { type: JsonSchemaType.INTEGER },
+              }
+            },
+            hash: {
+              type: JsonSchemaType.STRING,
+            },
+            data: { 
+              type: JsonSchemaType.OBJECT,
+              additionalProperties: false,
+              required: ['_k', '_v'],
+              properties: {
+                _k: { type: JsonSchemaType.STRING },
+                _v: { type: JsonSchemaType.STRING }
+              }
+            },
+            metadata: { 
+              type: JsonSchemaType.OBJECT,
+              additionalProperties: false,
+              required: ['id','version','txTime','txId'],
+              properties: {
+                id: { type: JsonSchemaType.STRING },
+                version: { type: JsonSchemaType.INTEGER },
+                txTime: { type: JsonSchemaType.STRING },
+                txId: { type: JsonSchemaType.STRING },
+              }
+            },
+          }
+      }
+    });
+
+    const verifyDocumentRevisionHashIntegration = new LambdaIntegration(backend, {
+      proxy: false,
+      requestParameters: {},
+      allowTestInvoke: true,
+      requestTemplates: {
+        'application/json': '{"ops":"verifyDocumentRevisionHash","payload":$input.json("$")}'
+      },
+      passthroughBehavior: PassthroughBehavior.NEVER,
+      integrationResponses: [ IntegrationResponse200, IntegrationResponse400, IntegrationResponse500 ]
+    });
+    
+    verifyDocumentRevisionHashResource.addMethod('POST', verifyDocumentRevisionHashIntegration, {
+      requestParameters: {
+        'method.request.header.Content-Type': true
+      },
+      requestModels: {
+        'application/json': verifyDocumentRevisionHashModel
+      },
+      requestValidator: validateBodyQueryStringAndHeader,
+      methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
+    });
+    // #### END OF POST /verify-doc-revision - verifyDocumentRevisionHash - Verify Document Revision Hash ####
   }
 }
