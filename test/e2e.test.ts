@@ -320,7 +320,7 @@ describe('Verify invoice receipt', () => {
     it('can verify 1 invoice receipt', async () => {
         
         const res = await request
-                                .post('/verify')
+                                .post('/verify-receipt')
                                 .send(_.cloneDeep(receipt))
                                 .set('Content-Type', 'application/json');
         expect(res.statusCode).toEqual(200);
@@ -331,7 +331,7 @@ describe('Verify invoice receipt', () => {
 
     it('cannot verify invoice receipt with improper format', async () => {
         const result = await request
-                                .post('/verify')
+                                .post('/verify-receipt')
                                 .send({})
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
@@ -346,7 +346,7 @@ describe('Verify invoice receipt', () => {
         m.BlockAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 3}"
 
         const result = await request
-                                .post('/verify')
+                                .post('/verify-receipt')
                                 .send(m)
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
@@ -361,7 +361,7 @@ describe('Verify invoice receipt', () => {
         m.DocumentId = 'abcdefghijklmnopqstuvw';
 
         const result = await request
-                                .post('/verify')
+                                .post('/verify-receipt')
                                 .send(m)
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
@@ -376,7 +376,7 @@ describe('Verify invoice receipt', () => {
         m.DocumentId = 'XYZ';
 
         const result = await request
-                                .post('/verify')
+                                .post('/verify-receipt')
                                 .send(m)
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
@@ -391,7 +391,7 @@ describe('Verify invoice receipt', () => {
         m.RevisionHash = 'abcdefghijklmnopqstuvw';
 
         const result = await request
-                                .post('/verify')
+                                .post('/verify-receipt')
                                 .send(m)
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
@@ -406,7 +406,7 @@ describe('Verify invoice receipt', () => {
         m.LedgerDigest.Digest = 'abcdefghijklmnopqstuvw';
 
         const result = await request
-                                .post('/verify')
+                                .post('/verify-receipt')
                                 .send(m)
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
@@ -421,7 +421,7 @@ describe('Verify invoice receipt', () => {
         m.LedgerDigest.DigestTipAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 8}"
 
         const result = await request
-                                .post('/verify')
+                                .post('/verify-receipt')
                                 .send(m)
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);

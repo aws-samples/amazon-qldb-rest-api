@@ -112,14 +112,13 @@ The car manufacturer sends both the invoice and the receipt to the car dealer ov
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '<Insert receipt>' \
-  ${ENDPOINT}/verify
+  ${ENDPOINT}/verify-receipt
 
 # Example:
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '{"LedgerName":"ledger1","TableName":"invoices","BlockAddress":{"IonText":"{strandId: \"1HqUNaR8u8s13eFiSzGZl9\", sequenceNo: 19}"},"DocumentId":"G3Oi84WQpSA3ppyitpjObh","RevisionHash":"fTbev2Z6saXsywdS482tVs8JKUYfNGvBt+Cz0lqd+0U=","Proof":{"IonText":"[{{qd5t27vMQBuXQjdhZypPnEu7ICTDtfTQRryKAvcluP8=}},{{oXFA3/VqV8DQfPC8dIoe7dM2WVhuxpB73EsV2V51Wy0=}},{{nIaxKownoP6zJN3+5Gef5VwrpM583rmTiE79wuHEEYQ=}},{{nIaxKownoP6zJN3+5Gef5VwrpM583rmTiE79wuHEEYQ=}},{{vjnkE8bFo8J30Ar8LB16AbGR5xlv+CW7KOqfLrUWmWE=}},{{Tc3apBD1JIJKZ1df2y4vA/nwgNcGb4xnF79QrZd1l64=}}]"},"LedgerDigest":{"Digest":"BcMsBi4tAfS+R0Sots1wSjACP2LkdrzUDfxUVAhCS58=","DigestTipAddress":{"IonText":"{strandId:\"1HqUNaR8u8s13eFiSzGZl9\",sequenceNo:19}"}}}' \
-  ${ENDPOINT}/verify
-```
+  ${ENDPOINT}/verify-receipt
 
 The response should be:
 
