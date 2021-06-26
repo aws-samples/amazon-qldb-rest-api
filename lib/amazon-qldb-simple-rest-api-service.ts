@@ -508,10 +508,16 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
     const getHistoryResource = api.root.addResource('history');
 
     const getHistoryRequestTemplate = `
-    #set($v = $util.escapeJavaScript($input.params("key")))
+    #set($k = $util.escapeJavaScript($input.params("key")))
+    #set($f = $util.escapeJavaScript($input.params("from")))
+    #set($t = $util.escapeJavaScript($input.params("to")))
     {
         "ops": "getHistory",
-        "payload": "$v"
+        "payload": {
+          "key": "$k",
+          "from": "$f",
+          "to": "$t"
+        }
     }`;
 
     const getHistoryIntegration = new LambdaIntegration(backend, {
@@ -527,7 +533,9 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
 
     getHistoryResource.addMethod('GET', getHistoryIntegration, {
       requestParameters: {
-        'method.request.querystring.key': true
+        'method.request.querystring.key': true,
+        'method.request.querystring.from': false,
+        'method.request.querystring.to': false
       },
       requestValidator: validateQueryStringAndHeader,
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]

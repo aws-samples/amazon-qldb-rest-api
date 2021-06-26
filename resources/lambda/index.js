@@ -66,7 +66,8 @@ const main = async (event, context) => {
                 break;
             
             case "getHistory":
-                res = await qldbKVS.getHistory(payload);
+                const defaultFromDateTime = '2020-01-01T00:00:00Z';
+                res = await qldbKVS.getHistory(payload.key, payload.from || defaultFromDateTime, payload.to || null);
                 break;
 
             default:

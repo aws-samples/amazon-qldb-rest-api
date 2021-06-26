@@ -19,6 +19,10 @@ const templateInvoice = {
     }
 }
 
+const returnCurrentTimeMinusOffset = (offsetInMinutes: number) => {
+    return new Date(new Date().getTime() - offsetInMinutes * 60000).toISOString().split('.')[0] + 'Z';
+}
+
 describe('Insert new invoice', () => {
     it('can insert 1 invoice', async () => {
         const invoiceNo = 'TEST10001';
@@ -531,15 +535,96 @@ describe('Get document revision by receipt', () => {
 });
 
 describe('Retrieve invoice history', () => {
+
+    beforeAll(async () => {
+        const invoiceNo = 'HISTORY0001';
+        let dataArray = [];
+        dataArray.push(_.cloneDeep(templateInvoice));
+        dataArray[0].key = invoiceNo;
+
+        const result = await request
+                                .post('/')
+                                .send(dataArray)
+                                .set('Content-Type', 'application/json');
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(typeof res).toEqual('object');
+        expect(res).toHaveProperty('documentId');
+        expect(res).toHaveProperty('txId');
+    });
+
     it('can retrieve 1 invoice history', async () => {
         const result = await request
                                 .get('/history')
                                 .query({
-                                    key: 'TEST10001'
+                                    key: 'HISTORY0001'
                                 })
         expect(result.statusCode).toEqual(200);
         const res = result.body;
         expect(Array.isArray(res)).toBe(true);
+        res.forEach((r: Object) => {
+            expect(r).toHaveProperty('blockAddress');
+            expect(r).toHaveProperty('hash');
+            expect(r).toHaveProperty('data');
+            expect(r).toHaveProperty('metadata');
+        });
+    });
+
+    it('can retrieve 1 invoice history with only from date-time', async () => {
+        const fromDateTime = returnCurrentTimeMinusOffset(3);
+        const result = await request
+                                .get('/history')
+                                .query({
+                                    key: 'HISTORY0001',
+                                    from: fromDateTime,
+                                })
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(Array.isArray(res)).toBe(true);
+        expect(res.length).toBeGreaterThanOrEqual(1);
+        res.forEach((r: Object) => {
+            expect(r).toHaveProperty('blockAddress');
+            expect(r).toHaveProperty('hash');
+            expect(r).toHaveProperty('data');
+            expect(r).toHaveProperty('metadata');
+        });
+    });
+
+    it('can retrieve 1 invoice history with only to date-time', async () => {
+        const toDateTime = returnCurrentTimeMinusOffset(0);
+        const result = await request
+                                .get('/history')
+                                .query({
+                                    key: 'HISTORY0001',
+                                    to: toDateTime,
+                                })
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(Array.isArray(res)).toBe(true);
+        expect(res.length).toBeGreaterThanOrEqual(1);
+        res.forEach((r: Object) => {
+            expect(r).toHaveProperty('blockAddress');
+            expect(r).toHaveProperty('hash');
+            expect(r).toHaveProperty('data');
+            expect(r).toHaveProperty('metadata');
+        });
+    });
+
+    it('can retrieve 1 invoice history with from and to date-time', async () => {
+        const toDateTime = returnCurrentTimeMinusOffset(0);
+        const fromDateTime = returnCurrentTimeMinusOffset(3);
+
+        const result = await request
+                                .get('/history')
+                                .query({
+                                    key: 'HISTORY0001',
+                                    from: fromDateTime,
+                                    to: toDateTime,
+                                })
+        expect(result.statusCode).toEqual(200);
+        const res = result.body;
+        expect(Array.isArray(res)).toBe(true);
+        expect(res.length).toBeGreaterThanOrEqual(1);
         res.forEach((r: Object) => {
             expect(r).toHaveProperty('blockAddress');
             expect(r).toHaveProperty('hash');
@@ -560,16 +645,46 @@ describe('Retrieve invoice history', () => {
         expect(res.message).toContain('Could not get history');
     });
 
-    it('cannot retrieve invoices without "key" query string', async () => {
+    it('cannot retrieve invoice history without "key" query string', async () => {
         const result = await request
                                 .get('/history')
                                 .query({
-                                    keys: 'TEST10001'
+                                    keys: 'HISTORY0001'
                                 })
         expect(result.statusCode).toEqual(400);
         const res = result.body;
         expect(res).toHaveProperty('message');
         expect(res.message).toContain('Missing required request parameters');
+    });
+
+    it('cannot retrieve invoice history with invalid from and to date-time format', async () => {
+        const result = await request
+                                .get('/history')
+                                .query({
+                                    key: 'HISTORY0001',
+                                    from: 'A',
+                                    to: 'B'
+                                })
+
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Could not get history');
+    });
+
+    it('cannot retrieve invoice history with from date-time later than to date-time', async () => {
+        const result = await request
+                                .get('/history')
+                                .query({
+                                    key: 'HISTORY0001',
+                                    from: '2021-06-20T07:09:00Z',
+                                    to: '2021-06-18T00:20:00Z'
+                                })
+
+        expect(result.statusCode).toEqual(400);
+        const res = result.body;
+        expect(res).toHaveProperty('message');
+        expect(res.message).toContain('Could not get history');
     });
 });
 
