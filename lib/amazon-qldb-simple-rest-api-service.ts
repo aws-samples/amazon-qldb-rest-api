@@ -424,8 +424,8 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
     });
     // #### END OF POST /verify-receipt - verifyLedgerMetadata - Verify Receipt ####
 
-    // #### POST /revision - getRevisionByMetadata - Get Document Revision by Metadata ####
-    const getRevisionByMetadataResource = api.root.addResource('revision');
+    // #### POST /retrieve-doc-revision - getRevisionByMetadata - Get Document Revision by Metadata ####
+    const getRevisionByMetadataResource = api.root.addResource('retrieve-doc-revision');
 
     const getRevisionByMetadataModel = api.addModel('GetRevisionByMetadataModel', {
       contentType: 'application/json',
@@ -502,7 +502,7 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
       requestValidator: validateBodyQueryStringAndHeader,
       methodResponses: [ methodResponse200, methodResponse400, methodResponse500]
     });
-    // #### END OF /revision - getRevisionByMetadata - Get Document Revision by Metadata ####
+    // #### END OF /retrieve-doc-revision - getRevisionByMetadata - Get Document Revision by Metadata ####
 
     // #### GET /history - history - Get History for Invoice ####
     const getHistoryResource = api.root.addResource('history');

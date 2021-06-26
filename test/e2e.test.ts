@@ -451,7 +451,7 @@ describe('Get document revision by receipt', () => {
     it('can retrieve 1 document revision by receipt', async () => {
         
         const res = await request
-                                .post('/revision')
+                                .post('/retrieve-doc-revision')
                                 .send(_.cloneDeep(receipt))
                                 .set('Content-Type', 'application/json');
         expect(res.statusCode).toEqual(200);
@@ -463,7 +463,7 @@ describe('Get document revision by receipt', () => {
 
     it('cannot retrieve document revision with improper format', async () => {
         const result = await request
-                                .post('/revision')
+                                .post('/retrieve-doc-revision')
                                 .send({})
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
@@ -478,7 +478,7 @@ describe('Get document revision by receipt', () => {
         m.BlockAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 3}"
 
         const result = await request
-                                .post('/revision')
+                                .post('/retrieve-doc-revision')
                                 .send(m)
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
@@ -493,7 +493,7 @@ describe('Get document revision by receipt', () => {
         m.DocumentId = 'abcdefghijklmnopqstuvw';
 
         const result = await request
-                                .post('/revision')
+                                .post('/retrieve-doc-revision')
                                 .send(m)
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
@@ -508,7 +508,7 @@ describe('Get document revision by receipt', () => {
         m.DocumentId = 'XYZ';
 
         const result = await request
-                                .post('/revision')
+                                .post('/retrieve-doc-revision')
                                 .send(m)
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
@@ -523,7 +523,7 @@ describe('Get document revision by receipt', () => {
         m.LedgerDigest.DigestTipAddress.IonText = "{strandId: \"abcdefghijklmnopqstuvw\", sequenceNo: 8}"
 
         const result = await request
-                                .post('/revision')
+                                .post('/retrieve-doc-revision')
                                 .send(m)
                                 .set('Content-Type', 'application/json');
         expect(result.statusCode).toEqual(400);
