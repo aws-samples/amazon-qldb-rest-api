@@ -65,7 +65,7 @@ The first step is for the car manufacturer to issue an invoice to the car dealer
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '[{"key": "INV01","value": {"date": "2021-05-22","billTo": "ABC Car Dealer Pte Ltd","paymentStatus":"PENDING","carInfo": {"model": "Honda","make": "Jazz","year": 2021,"unitPrice": 89000},"quantity": 10}}]' \
-   $ENDPOINT
+   $APIGW_ENDPOINT
 ```
 
 Save the `documentId` (Document ID) and `txId` (Transaction ID) returned. For example,
@@ -77,10 +77,10 @@ Save the `documentId` (Document ID) and `txId` (Transaction ID) returned. For ex
 In the example above, the `documentId` is **G3Oi84WQpSA3ppyitpjObh**. Using both the `documentId` and `txId`, the car manufacturer retrieve the receipt for the invoice:
 
 ```bash
-curl ${ENDPOINT}/receipt-by-doc\?documentId=<insert documentId>\&txId=<insert txId> | jq
+curl ${APIGW_ENDPOINT}/receipt-by-doc\?documentId=<insert documentId>\&txId=<insert txId> | jq
 
 # Example:
-curl ${ENDPOINT}/receipt-by-doc\?documentId=G3Oi84WQpSA3ppyitpjObh\&txId=HgXB2kkD0LDL2o7OIIKSXo | jq
+curl ${APIGW_ENDPOINT}/receipt-by-doc\?documentId=G3Oi84WQpSA3ppyitpjObh\&txId=HgXB2kkD0LDL2o7OIIKSXo | jq
 ```
 
 Save the receipt returned. For example,
@@ -112,13 +112,13 @@ The car manufacturer sends both the invoice and the receipt to the car dealer ov
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '<Insert receipt>' \
-  ${ENDPOINT}/verify-receipt
+  ${APIGW_ENDPOINT}/verify-receipt
 
 # Example:
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '{"LedgerName":"ledger1","TableName":"invoices","BlockAddress":{"IonText":"{strandId: \"1HqUNaR8u8s13eFiSzGZl9\", sequenceNo: 19}"},"DocumentId":"G3Oi84WQpSA3ppyitpjObh","RevisionHash":"fTbev2Z6saXsywdS482tVs8JKUYfNGvBt+Cz0lqd+0U=","Proof":{"IonText":"[{{qd5t27vMQBuXQjdhZypPnEu7ICTDtfTQRryKAvcluP8=}},{{oXFA3/VqV8DQfPC8dIoe7dM2WVhuxpB73EsV2V51Wy0=}},{{nIaxKownoP6zJN3+5Gef5VwrpM583rmTiE79wuHEEYQ=}},{{nIaxKownoP6zJN3+5Gef5VwrpM583rmTiE79wuHEEYQ=}},{{vjnkE8bFo8J30Ar8LB16AbGR5xlv+CW7KOqfLrUWmWE=}},{{Tc3apBD1JIJKZ1df2y4vA/nwgNcGb4xnF79QrZd1l64=}}]"},"LedgerDigest":{"Digest":"BcMsBi4tAfS+R0Sots1wSjACP2LkdrzUDfxUVAhCS58=","DigestTipAddress":{"IonText":"{strandId:\"1HqUNaR8u8s13eFiSzGZl9\",sequenceNo:19}"}}}' \
-  ${ENDPOINT}/verify-receipt
+  ${APIGW_ENDPOINT}/verify-receipt
 
 The response should be:
 
@@ -132,7 +132,7 @@ Now that the car dealer is assured that the invoice is correct, the car dealer p
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '[{"key": "INV01","value": {"date": "2021-05-22","billTo": "ABC Car Dealer Pte Ltd","paymentStatus":"TRANSFERRED","carInfo": {"model": "Honda","make": "Jazz","year": 2021,"unitPrice": 89000},"quantity": 10}}]' \
-   $ENDPOINT
+   $APIGW_ENDPOINT
 ```
 
 Observe the `documentId` and `txId` returned. The `documentId` should not change while the `txId` changes. For example,
@@ -144,7 +144,7 @@ Observe the `documentId` and `txId` returned. The `documentId` should not change
 The car dealer sends the `documentId` and `txId` to the car manufacturer. The car manufacturer retrieves the history for the invoice:
 
 ```bash
-curl ${ENDPOINT}/history\?key=INV01 | jq
+curl ${APIGW_ENDPOINT}/history\?key=INV01 | jq
 ```
 
 The response should be similar to the following:
@@ -196,7 +196,7 @@ Based on the retrieved history information, the car manufacturer finds the corre
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '[{"key": "INV01","value": {"date": "2021-05-22","billTo": "ABC Car Dealer Pte Ltd","paymentStatus":"CONFIRMED","carInfo": {"model": "Honda","make": "Jazz","year": 2021,"unitPrice": 89000},"quantity": 10}}]' \
-   $ENDPOINT
+   $APIGW_ENDPOINT
 ```
 
 As expected, a new `txId` is generated for the same `documentId`
@@ -208,7 +208,7 @@ As expected, a new `txId` is generated for the same `documentId`
 The car manufacturer also retrieves the receipt for the returned `documentId` and `txId`
 
 ```bash
-curl ${ENDPOINT}/receipt-by-doc\?documentId=G3Oi84WQpSA3ppyitpjObh\&txId=KWBzGMEvU1VFRRsmrnT2NT | jq
+curl ${APIGW_ENDPOINT}/receipt-by-doc\?documentId=G3Oi84WQpSA3ppyitpjObh\&txId=KWBzGMEvU1VFRRsmrnT2NT | jq
 ```
 
 Save the receipt returned. For example:

@@ -24,7 +24,7 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
 
     const ledgerQLDB = new qldb.CfnLedger(this, 'qldb-ledger-kvs', {
       name: LEDGER_NAME,
-      permissionsMode: 'ALLOW_ALL',
+      permissionsMode: 'STANDARD',
       deletionProtection: false,
       tags: [{
         key: 'QLDBRESTAPI',
@@ -46,13 +46,35 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
     backend.addToRolePolicy(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       resources: [`arn:aws:qldb:${AWS_REGION}:${AWS_ACCOUNT}:ledger/${ledgerQLDB.ref}`],
-      actions: ['qldb:ExecuteStatement',
+      actions: [
         'qldb:GetBlock',
         'qldb:ListLedgers',
         'qldb:GetRevision',
         'qldb:DescribeLedger',
         'qldb:SendCommand',
-        'qldb:GetDigest'],
+        'qldb:GetDigest',
+      ],
+    }));
+
+    backend.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      resources: [`arn:aws:qldb:${AWS_REGION}:${AWS_ACCOUNT}:ledger/${ledgerQLDB.ref}/table/*`],
+      actions: [
+        'qldb:PartiQLCreateTable',
+        'qldb:PartiQLCreateIndex',
+        'qldb:PartiQLInsert',
+        'qldb:PartiQLUpdate',
+        'qldb:PartiQLSelect',
+        'qldb:PartiQLHistoryFunction',
+      ],
+    }));
+
+    backend.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      resources: [`arn:aws:qldb:${AWS_REGION}:${AWS_ACCOUNT}:ledger/${ledgerQLDB.ref}/information_schema/user_tables`],
+      actions: [
+        'qldb:PartiQLSelect',
+      ],
     }));
 
     const api = new apigateway.RestApi(this, 'qldb-rest-api-kvs', {

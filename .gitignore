@@ -4,6 +4,7 @@ bin/*.js
 *.d.ts
 node_modules
 spike
+log
 
 # CDK asset staging directory
 .cdk.staging
