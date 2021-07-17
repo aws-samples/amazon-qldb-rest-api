@@ -9,7 +9,7 @@
     "bootstrap-cdk": "./devops/cdk-bootstrap-to.sh",
     "deploy-cdk": "./devops/cdk-deploy-to.sh",
     "clean-cdk": "./devops/cdk-clean-from.sh",
-    "lint": "eslint lib/amazon-qldb-simple-rest-api-service.ts lib/amazon-qldb-simple-rest-api-stack.ts resources/lambda/*.js",
+    "lint": "eslint lib/*.ts resources/lambda/*.js",
     "build": "npm run lint && tsc",
     "watch": "tsc -w",
     "test": "jest",
