@@ -18,8 +18,8 @@ To deploy and test the REST APIs, you will need to fullfill the following pre-re
 Clone the code and browse into the directory:
 
 ```bash
-git clone https://github.com/aws-samples/qldb-api
-cd qldb-api
+git clone https://github.com/aws-samples/amazon-qldb-simple-rest-api
+cd amazon-qldb-simple-rest-api
 ```
 
 Download Lambda function dependencies:

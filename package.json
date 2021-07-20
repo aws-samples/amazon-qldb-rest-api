@@ -41,5 +41,20 @@
     "@aws-cdk/aws-cloudwatch": "^1.113.0",
     "@aws-cdk/core": "1.113.0",
     "source-map-support": "^0.5.16"
-  }
+  },
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com/"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws-samples/amazon-qldb-simple-rest-api"
+  },
+  "keywords": [
+    "qldb",
+    "lambda",
+    "api",
+    "rest"
+  ]
 }
