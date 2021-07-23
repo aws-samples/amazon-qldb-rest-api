@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 const { QLDBKVS } = require('amazon-qldb-kvs-nodejs');
 const util = require('util');
 const parseErrorMessage = require('./errorHandler');

@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 const { APIGW_ENDPOINT } = process.env;
 const request = require('supertest')(APIGW_ENDPOINT);
 const _ = require('lodash');
