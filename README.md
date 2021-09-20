@@ -1,6 +1,8 @@
-# Amazon QLDB Simple REST API
+# Integrate with Amazon QLDB with a REST API and JSON
 
-Amazon Quantum Ledger Database (Amazon QLDB) is a fully managed ledger database service that is handy for keeping your data immutable and maintain cryptographically verifiable transaction log. It is useful in use cases when you need to track data that needs to be audited such as financial transactions or invoice data. In this code sample, we will introduce a simple way to use the key audit features with the help of Amazon QLDB through an easy-to-use REST API.  
+Amazon Quantum Ledger Database (Amazon QLDB) is a fully managed ledger database service. It’s very helpful when you need to keep your data immutable and maintain a cryptographically verifiable transaction log of all changes made to it. For example, when you need to track data that will be audited in the future, such as financial transactions, invoices data, asset ownership information, and so on.
+
+In this post, we introduce a way to work with data in Amazon QLDB and use its key audit features through a REST API. To illustrate those features, we introduce a sample use case of tracking invoice data shared by car manufacturers with their dealers.
 
 ## Deploying and interacting with the application
 
