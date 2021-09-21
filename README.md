@@ -24,6 +24,12 @@ git clone https://github.com/aws-samples/amazon-qldb-simple-rest-api
 cd amazon-qldb-simple-rest-api
 ```
 
+Install dependencies
+
+```bash
+npm ci
+```
+
 Download Lambda function dependencies:
 
 ```bash
@@ -253,7 +259,7 @@ npm run clean-cdk 123456789012 ap-southeast-1
 
 To run automated test, ensure that the application is deployed successfully by referring to [Deploy the application resources](#deploy-the-application-resources) section
 
-Install dependencies
+Install dependencies (if you have not done so)
 
 ```bash
 npm ci
