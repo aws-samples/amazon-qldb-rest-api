@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/amazon-qldb-simple-rest-api.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/amazon-qldb-rest-api.ts",
   "context": {
     "@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId": true,
     "@aws-cdk/core:enableStackNameDuplicates": "true",

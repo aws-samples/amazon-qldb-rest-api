@@ -21,14 +21,14 @@ import {
   VerifyLedgerMetadataModel,
   GetRevisionByMetadataModel,
   VerifyDocumentRevisionHashModel,
-} from './amazon-qldb-simple-rest-api-models';
+} from './amazon-qldb-rest-api-models';
 
 const LEDGER_NAME = process.env.LEDGER_NAME ? process.env.LEDGER_NAME : 'keyvaluestore';
 const TABLE_NAME = process.env.TABLE_NAME ? process.env.TABLE_NAME : 'keyvaluedata';
 const AWS_ACCOUNT = process.env.CDK_DEFAULT_ACCOUNT;
 const AWS_REGION = process.env.CDK_DEFAULT_REGION;
 
-export class AmazonQldbSimpleRestApiService extends core.Construct {
+export class AmazonQldbRestApiService extends core.Construct {
   constructor(scope: core.Construct, id: string) {
     super(scope, id);
 
@@ -97,8 +97,8 @@ export class AmazonQldbSimpleRestApiService extends core.Construct {
           },
         },
       },
-      restApiName: 'Amazon QLDB simple key value store Service',
-      description: 'This service exposes a simple key-value store interace API for Amazon QLDB through REST pattern.',
+      restApiName: 'Amazon QLDB key value store Service',
+      description: 'This service exposes a key-value store interface API for Amazon QLDB through REST pattern.',
     });
 
     const { root } = api;

@@ -3,12 +3,12 @@
 
 import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
-import * as AmazonQldbSimpleRestApi from '../lib/amazon-qldb-simple-rest-api-stack';
+import * as AmazonQldbRestApi from '../lib/amazon-qldb-rest-api-stack';
 
 test('Empty Stack', () => {
   const app = new cdk.App();
   // WHEN
-  const stack = new AmazonQldbSimpleRestApi.AmazonQldbSimpleRestApiStack(app, 'MyTestStack');
+  const stack = new AmazonQldbRestApi.AmazonQldbRestApiStack(app, 'MyTestStack');
   // THEN
   expectCDK(stack).to(matchTemplate({
     Resources: {},

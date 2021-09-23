@@ -10,7 +10,7 @@ In this post, we introduce a way to work with data in Amazon QLDB and use its ke
 
 To deploy and test the REST APIs, you will need to fullfill the following pre-requisites:
 
-* Install [NodeJS](https://nodejs.org/en/download/) version 12 or above
+* Install [NodeJS](https://nodejs.org/en/download/) version 14 or above. Ensure that `npm` version is 7 or above
 * [Configure](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html) AWS CLI to interact with AWS account of your choice
 * Install [AWS Cloud Development Kit (CDK)](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html)
 * [jq](https://stedolan.github.io/jq/) installed
@@ -20,8 +20,8 @@ To deploy and test the REST APIs, you will need to fullfill the following pre-re
 Clone the code and browse into the directory:
 
 ```bash
-git clone https://github.com/aws-samples/amazon-qldb-simple-rest-api
-cd amazon-qldb-simple-rest-api
+git clone https://github.com/aws-samples/amazon-qldb-rest-api
+cd amazon-qldb-rest-api
 ```
 
 Install dependencies
