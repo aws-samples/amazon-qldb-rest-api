@@ -1,11 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import * as core from '@aws-cdk/core';
-import * as apigateway from '@aws-cdk/aws-apigateway';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as qldb from '@aws-cdk/aws-qldb';
-import * as iam from '@aws-cdk/aws-iam';
+import { Construct } from 'constructs';
+import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as qldb from 'aws-cdk-lib/aws-qldb';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import {
   LambdaIntegration,
   PassthroughBehavior,
@@ -13,8 +13,8 @@ import {
   JsonSchemaType,
   EndpointType,
   RequestValidator,
-} from '@aws-cdk/aws-apigateway';
-import { Duration } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-apigateway';
+import { Duration } from 'aws-cdk-lib';
 
 import {
   SetValueModel,
@@ -28,8 +28,8 @@ const TABLE_NAME = process.env.TABLE_NAME ? process.env.TABLE_NAME : 'keyvalueda
 const AWS_ACCOUNT = process.env.CDK_DEFAULT_ACCOUNT;
 const AWS_REGION = process.env.CDK_DEFAULT_REGION;
 
-export class AmazonQldbRestApiService extends core.Construct {
-  constructor(scope: core.Construct, id: string) {
+export class AmazonQldbRestApiService extends Construct {
+  constructor(scope: Construct, id: string) {
     super(scope, id);
 
     const ledgerQLDB = new qldb.CfnLedger(this, 'qldb-ledger-kvs', {

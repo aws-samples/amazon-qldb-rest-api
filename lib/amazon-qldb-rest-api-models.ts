@@ -5,7 +5,7 @@ import {
   JsonSchemaVersion,
   JsonSchemaType,
   ModelOptions,
-} from '@aws-cdk/aws-apigateway';
+} from 'aws-cdk-lib/aws-apigateway';
 
 const SetValueModel: ModelOptions = {
   contentType: 'application/json',
