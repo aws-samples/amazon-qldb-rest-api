@@ -745,7 +745,7 @@ describe('Verify document revision', () => {
     const d = _.cloneDeep(docRevision);
 
     d.data._k = 'aaa';
-    d.data._v = 'bbb';
+    d.data.billTo = 'My Company';
 
     const result = await request
       .post('/verify-doc-revision')

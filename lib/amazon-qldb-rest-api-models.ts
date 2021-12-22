@@ -201,10 +201,41 @@ const VerifyDocumentRevisionHashModel: ModelOptions = {
       data: {
         type: JsonSchemaType.OBJECT,
         additionalProperties: false,
-        required: ['_k', '_v'],
+        required: ['_k', 'date', 'billTo', 'paymentStatus', 'quantity', 'carInfo'],
         properties: {
           _k: { type: JsonSchemaType.STRING },
-          _v: { type: JsonSchemaType.STRING },
+          date: {
+            type: JsonSchemaType.STRING,
+          },
+          billTo: {
+            type: JsonSchemaType.STRING,
+          },
+          paymentStatus: {
+            type: JsonSchemaType.STRING,
+            enum: ['PENDING', 'TRANSFERRED', 'CONFIRMED'],
+          },
+          quantity: {
+            type: JsonSchemaType.INTEGER,
+          },
+          carInfo: {
+            type: JsonSchemaType.OBJECT,
+            additionalProperties: false,
+            required: ['model', 'make', 'year', 'unitPrice'],
+            properties: {
+              model: {
+                type: JsonSchemaType.STRING,
+              },
+              make: {
+                type: JsonSchemaType.STRING,
+              },
+              year: {
+                type: JsonSchemaType.INTEGER,
+              },
+              unitPrice: {
+                type: JsonSchemaType.NUMBER,
+              },
+            },
+          },
         },
       },
       metadata: {

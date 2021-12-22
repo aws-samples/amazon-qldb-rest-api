@@ -12,7 +12,7 @@ To deploy and test the REST APIs, you will need to fullfill the following pre-re
 
 * Install [NodeJS](https://nodejs.org/en/download/) version 14 or above. Ensure that `npm` version is 7 or above
 * [Configure](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html) AWS CLI to interact with AWS account of your choice
-* Install [AWS Cloud Development Kit (CDK)](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html)
+* Install [AWS Cloud Development Kit (CDK) v2](https://docs.aws.amazon.com/cdk/v2/guide/home.html)
 * [jq](https://stedolan.github.io/jq/) installed
 
 ### Deploy the application resources
@@ -166,8 +166,17 @@ The response should be similar to the following:
     },
     "hash": "fTbev2Z6saXsywdS482tVs8JKUYfNGvBt+Cz0lqd+0U=",
     "data": {
-      "_key": "INV01",
-      "_val": "{\"date\":\"2021-05-22\",\"billTo\":\"ABC Car Dealer Pte Ltd\",\"paymentStatus\":\"PENDING\",\"carInfo\":{\"model\":\"Honda\",\"make\":\"Jazz\",\"year\":2021,\"unitPrice\":89000},\"quantity\":10}"
+      "date": "2021-05-22",
+      "billTo": "ABC Car Dealer Pte Ltd",
+      "paymentStatus": "PENDING",
+      "carInfo": {
+          "model": "Honda",
+          "make": "Jazz",
+          "year": 2021,
+          "unitPrice": 89000
+      },
+      "quantity": 10,
+      "_k": "INV01"
     },
     "metadata": {
       "id": "G3Oi84WQpSA3ppyitpjObh",
@@ -183,8 +192,17 @@ The response should be similar to the following:
     },
     "hash": "b1UedL09zgDf4+ArLClSow6vP3RwgSh45RSk/Bd3ah4=",
     "data": {
-      "_key": "INV01",
-      "_val": "{\"date\":\"2021-05-22\",\"billTo\":\"ABC Car Dealer Pte Ltd\",\"paymentStatus\":\"TRANSFERRED\",\"carInfo\":{\"model\":\"Honda\",\"make\":\"Jazz\",\"year\":2021,\"unitPrice\":89000},\"quantity\":10}"
+        "date": "2021-05-22",
+        "billTo": "ABC Car Dealer Pte Ltd",
+        "paymentStatus": "TRANSFERRED",
+        "carInfo": {
+            "model": "Honda",
+            "make": "Jazz",
+            "year": 2021,
+            "unitPrice": 89000
+        },
+        "quantity": 10,
+        "_k": "INV01"
     },
     "metadata": {
       "id": "G3Oi84WQpSA3ppyitpjObh",
